@@ -72,4 +72,6 @@ dependencies {
 	testCompile "io.mockk:mockk:1.7.15"
 	compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21"
 	compile 'com.sendgrid:sendgrid-java:4.0.1'
+	compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.11.356'
+	compile group: 'com.github.spring-data-dynamodb', name: 'spring-data-dynamodb', version: '5.0.2'
 }

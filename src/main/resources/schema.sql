@@ -21,7 +21,6 @@ CREATE TABLE `Match` (
   aTeam varchar(255) NOT NULL,
   hGoals int(2) DEFAULT NULL,
   aGoals int(2) DEFAULT NULL,
-  matchGroup char(1) DEFAULT NULL,
   played tinyint(1) DEFAULT '0',
   dateTime datetime NOT NULL,
   matchday int(2) NOT NULL DEFAULT '0',
