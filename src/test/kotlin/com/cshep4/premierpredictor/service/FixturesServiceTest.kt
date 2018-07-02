@@ -10,6 +10,8 @@ import com.cshep4.premierpredictor.data.OverrideMatch
 import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchEntity
+import com.cshep4.premierpredictor.entity.MatchFactsEntity
+import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.repository.sql.FixturesRepository
 import com.cshep4.premierpredictor.service.fixtures.UpdateFixturesService
 import com.nhaarman.mockito_kotlin.any
@@ -54,6 +56,9 @@ internal class FixturesServiceTest {
 
     @Mock
     private lateinit var fixturesByDate: FixturesByDate
+
+    @Mock
+    private lateinit var matchFactsRepository: MatchFactsRepository
 
     @InjectMocks
     private lateinit var fixturesService: FixturesService
@@ -179,15 +184,17 @@ internal class FixturesServiceTest {
     @Test
     fun `'retrieveAllUpcomingFixtures' will return list of matches by date if there are some upcoming`() {
         val matches = listOf(
-                MatchEntity(dateTime = LocalDateTime.now().plusDays(1)),
-                MatchEntity(dateTime = LocalDateTime.now().minusDays(1))
+                MatchFactsEntity(),
+                MatchFactsEntity()
         )
+        matches[0].setDateTime(LocalDateTime.now().plusDays(1))
+        matches[1].setDateTime(LocalDateTime.now().minusDays(1))
 
-        val upcomingMatches = matches.filter { it.dateTime!!.isAfter(LocalDateTime.now()) }.map { it.toDto() }
+        val upcomingMatches = matches.filter { it.getDateTime()!!.isAfter(LocalDateTime.now()) }.map { it.toDto() }
 
-        val expectedResult = mapOf(Pair(LocalDate.now(), listOf(Match())))
+        val expectedResult = mapOf(Pair(LocalDate.now(), listOf(MatchFacts())))
 
-        whenever(fixturesRepository.findAll()).thenReturn(matches)
+        whenever(matchFactsRepository.findAll()).thenReturn(matches)
         whenever(fixturesByDate.format(upcomingMatches)).thenReturn(expectedResult)
 
         val result = fixturesService.retrieveAllUpcomingFixtures()
@@ -198,9 +205,12 @@ internal class FixturesServiceTest {
 
     @Test
     fun `'retrieveAllUpcomingFixtures' will return empty list of matches by date if there are none upcoming`() {
-        val matches = listOf(MatchEntity(dateTime = LocalDateTime.now().minusDays(1)))
+        val matches = listOf(
+                MatchFactsEntity()
+        )
+        matches[0].setDateTime(LocalDateTime.now().minusDays(1))
 
-        whenever(fixturesRepository.findAll()).thenReturn(matches)
+        whenever(matchFactsRepository.findAll()).thenReturn(matches)
 
         val result = fixturesService.retrieveAllUpcomingFixtures()
 

@@ -7,13 +7,15 @@ import com.cshep4.premierpredictor.component.fixtures.OverrideMatchScore
 import com.cshep4.premierpredictor.component.fixtures.PredictionMerger
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
+import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
+import com.cshep4.premierpredictor.extension.isToday
+import com.cshep4.premierpredictor.extension.isUpcoming
+import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.repository.sql.FixturesRepository
 import com.cshep4.premierpredictor.service.fixtures.UpdateFixturesService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.Clock
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Service
 class FixturesService {
@@ -40,6 +42,9 @@ class FixturesService {
 
     @Autowired
     private lateinit var overrideMatchScore: OverrideMatchScore
+
+    @Autowired
+    private lateinit var matchFactsRepository: MatchFactsRepository
 
     @Autowired
     private lateinit var fixturesByDate: FixturesByDate
@@ -80,8 +85,12 @@ class FixturesService {
         return predictionMerger.merge(matches, predictions)
     }
 
-    fun retrieveAllUpcomingFixtures() : Map<LocalDate, List<Match>> {
-        val upcomingMatches = retrieveAllMatches().filter { it.dateTime!!.isAfter(LocalDateTime.now(Clock.systemUTC())) }
+    fun retrieveAllUpcomingFixtures() : Map<LocalDate, List<MatchFacts>> {
+        val upcomingMatches = matchFactsRepository.findAll()
+                .filter { it.getDateTime()!!.isToday() || it.getDateTime()!!.isUpcoming() }
+                .sortedBy { it.getDateTime() }
+                .take(20)
+                .map { it.toDto() }
 
         return if (upcomingMatches.isEmpty()) {
             emptyMap()

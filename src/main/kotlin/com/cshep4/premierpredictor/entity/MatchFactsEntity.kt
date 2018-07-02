@@ -9,7 +9,11 @@ import com.cshep4.premierpredictor.data.api.live.match.Event
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.utils.LocalDateTimeConverter
 import org.springframework.data.annotation.Id
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @DynamoDBTable(tableName = "Match")
 data class MatchFactsEntity(
@@ -94,6 +98,21 @@ data class MatchFactsEntity(
             status = this.status,
             commentary = this.commentary,
             lastUpdated = this.lastUpdated)
+
+    fun getDateTime(): LocalDateTime? {
+        val time = LocalTime.parse(this.time)
+        val date = LocalDate.parse(this.formattedDate, DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.ENGLISH))
+
+        return LocalDateTime.of(date, time)
+    }
+
+    fun setDateTime(localDateTime: LocalDateTime) {
+        val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        this.time = localDateTime.format(timeFormatter)
+
+        val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.ENGLISH)
+        this.formattedDate = localDateTime.format(dateFormatter)
+    }
 
     companion object {
         fun fromDto(dto: MatchFacts) = MatchFactsEntity(

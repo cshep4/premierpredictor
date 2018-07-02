@@ -2,6 +2,7 @@ package com.cshep4.premierpredictor.controller
 
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
+import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchFactsEntity
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.service.FixturesService
@@ -61,7 +62,7 @@ class FixturesController {
     }
 
     @GetMapping("/upcoming")
-    fun getUpcomingFixtures() : ResponseEntity<Map<LocalDate, List<Match>>> {
+    fun getUpcomingFixtures() : ResponseEntity<Map<LocalDate, List<MatchFacts>>> {
         val fixtures = fixturesService.retrieveAllUpcomingFixtures()
 
         return ResponseEntity.ok(fixtures)
@@ -69,6 +70,32 @@ class FixturesController {
 
     @GetMapping("/facts")
     fun getFacts() : MatchFactsEntity? {
+//        val url = "$API_URL?from_date=$FROM_DATE&to_date=$TO_DATE&comp_id=$COMP_ID&Authorization=$API_KEY"
+//        val (req, res, result) = url.httpGet().responseString()
+//
+//        val matches = result.fold({ data ->
+//            return@fold ObjectMapper().readValue(data, Array<MatchFacts>::class.java)
+//        }, { _ ->
+//            return@fold null
+//        }) ?: return null
+//
+//        matches?.map { it.lastUpdated = LocalDateTime.now() }
+//
+//        val matchEntities = matches?.map { MatchFactsEntity.fromDto(it) }!!.toMutableList()
+//
+//        matchFactsRepository.saveAll(matchEntities)
+
+//        val match = matchFactsRepository.findById("2378479").get()
+//
+//        match.commentary = Commentary()
+//
+//        matchFactsRepository.save(match)
+
+        return matchFactsRepository.findById("2378479").get()
+    }
+
+    @GetMapping("/facts/{id}")
+    fun getMatchFacts(@PathVariable(value = "id") id: String) : MatchFactsEntity? {
 //        val url = "$API_URL?from_date=$FROM_DATE&to_date=$TO_DATE&comp_id=$COMP_ID&Authorization=$API_KEY"
 //        val (req, res, result) = url.httpGet().responseString()
 //

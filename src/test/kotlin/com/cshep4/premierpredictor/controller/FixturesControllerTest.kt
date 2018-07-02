@@ -2,6 +2,7 @@ package com.cshep4.premierpredictor.controller
 
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
+import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.service.FixturesService
 import com.cshep4.premierpredictor.service.UserScoreService
 import com.nhaarman.mockito_kotlin.times
@@ -100,7 +101,7 @@ internal class FixturesControllerTest {
     @Test
     fun `'getUpcomingFixtures' should get upcoming fixtures and return with OK`() {
         val upcomingFixtures = mapOf(
-                Pair(LocalDate.now(), listOf(Match()))
+                Pair(LocalDate.now(), listOf(MatchFacts()))
         )
 
         whenever(fixturesService.retrieveAllUpcomingFixtures()).thenReturn(upcomingFixtures)

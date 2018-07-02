@@ -22,7 +22,7 @@ data class MatchFacts(
 		val compId: String? = null,
 
 		@JsonProperty("formatted_date")
-		val formattedDate: String? = null,
+		var formattedDate: String? = null,
 
 		@JsonProperty("season")
 		val season: String? = null,
@@ -46,7 +46,7 @@ data class MatchFacts(
 		val timer: String? = null,
 
 		@JsonProperty("time")
-		val time: String? = null,
+		var time: String? = null,
 
 		@JsonProperty("localteam_id")
 		val localTeamId: String? = null,
@@ -104,11 +104,21 @@ data class MatchFacts(
 			dateTime = getDateTime(),
 			matchday = this.week!!.toInt())
 
-	private fun getDateTime(): LocalDateTime? {
+	@JsonIgnore
+	fun getDateTime(): LocalDateTime? {
 		val time = LocalTime.parse(this.time)
 		val date = LocalDate.parse(this.formattedDate, DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.ENGLISH))
 
 		return LocalDateTime.of(date, time)
+	}
+
+	@JsonIgnore
+	fun setDateTime(localDateTime: LocalDateTime) {
+		val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+		this.time = localDateTime.format(timeFormatter)
+
+		val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.ENGLISH)
+		this.formattedDate = localDateTime.format(dateFormatter)
 	}
 
 	private fun getPlayed(): Int {
