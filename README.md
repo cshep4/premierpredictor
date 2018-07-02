@@ -1,2 +1,2 @@
-# wcpredictor
-World Cup 2018 Predictor Back-end APIs
+# Premier Predictor
+Premier League 18/19 Predictor Back-end APIs
