@@ -2,6 +2,7 @@ package com.cshep4.premierpredictor.entity
 
 import com.cshep4.premierpredictor.data.SignUpUser
 import com.cshep4.premierpredictor.data.User
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -15,7 +16,10 @@ data class UserEntity (
     var email: String? = null,
     var password: String? = null,
     var predictedWinner: String = "",
-    var score: Int = 0
+    var score: Int = 0,
+    val joined: LocalDateTime? = null,
+    var admin: Boolean = false,
+    var adFree: Boolean = false
 ){
 
     fun toDto(): User = User(
@@ -25,7 +29,10 @@ data class UserEntity (
             email = this.email,
             password = this.password,
             predictedWinner = this.predictedWinner,
-            score = this.score)
+            score = this.score,
+            joined = this.joined,
+            admin = this.admin,
+            adFree = this.adFree)
 
     companion object {
         fun fromDto(dto: User) = UserEntity(
@@ -35,7 +42,10 @@ data class UserEntity (
                 email = dto.email,
                 password = dto.password,
                 predictedWinner = dto.predictedWinner,
-                score = dto.score)
+                score = dto.score,
+                joined = dto.joined,
+                admin = dto.admin,
+                adFree = dto.adFree)
 
         fun fromDto(dto: SignUpUser) = UserEntity(
                 id = dto.id!!,
