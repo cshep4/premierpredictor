@@ -1,9 +1,6 @@
 package com.cshep4.premierpredictor.entity
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedJson
+import com.amazonaws.services.dynamodbv2.datamodeling.*
 import com.cshep4.premierpredictor.data.api.live.commentary.Commentary
 import com.cshep4.premierpredictor.data.api.live.match.Event
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
@@ -99,6 +96,7 @@ data class MatchFactsEntity(
             commentary = this.commentary,
             lastUpdated = this.lastUpdated)
 
+    @DynamoDBIgnore
     fun getDateTime(): LocalDateTime? {
         val time = LocalTime.parse(this.time)
         val date = LocalDate.parse(this.formattedDate, DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.ENGLISH))

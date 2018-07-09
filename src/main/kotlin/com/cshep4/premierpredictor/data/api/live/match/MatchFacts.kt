@@ -40,10 +40,10 @@ data class MatchFacts(
 		val venueCity: String? = null,
 
 		@JsonProperty("status")
-		val status: String? = null,
+		var status: String? = null,
 
 		@JsonProperty("timer")
-		val timer: String? = null,
+		var timer: String? = null,
 
 		@JsonProperty("time")
 		var time: String? = null,
@@ -127,5 +127,10 @@ data class MatchFacts(
 		} else {
 			0
 		}
+	}
+
+	@JsonIgnore
+	fun isInNeedOfUpdate(): Boolean {
+		return lastUpdated!!.isBefore(LocalDateTime.now().minusSeconds(20))
 	}
 }

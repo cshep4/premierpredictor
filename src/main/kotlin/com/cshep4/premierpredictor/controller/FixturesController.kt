@@ -68,6 +68,13 @@ class FixturesController {
         return ResponseEntity.ok(fixtures)
     }
 
+    @GetMapping("/liveScore/{id}")
+    fun getLiveScoreForMatch(@PathVariable(value = "id") id: Long) : ResponseEntity<MatchFacts> {
+        val match = fixturesService.retrieveLiveScoreForMatch(id) ?: return ResponseEntity.notFound().build()
+
+        return ResponseEntity.ok(match)
+    }
+
     @GetMapping("/facts")
     fun getFacts() : MatchFactsEntity? {
 //        val url = "$API_URL?from_date=$FROM_DATE&to_date=$TO_DATE&comp_id=$COMP_ID&Authorization=$API_KEY"
@@ -84,7 +91,7 @@ class FixturesController {
 //        val matchEntities = matches?.map { MatchFactsEntity.fromDto(it) }!!.toMutableList()
 //
 //        matchFactsRepository.saveAll(matchEntities)
-
+//
 //        val match = matchFactsRepository.findById("2378479").get()
 //
 //        match.commentary = Commentary()

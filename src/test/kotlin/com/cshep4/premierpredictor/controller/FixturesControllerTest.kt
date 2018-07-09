@@ -112,5 +112,26 @@ internal class FixturesControllerTest {
         assertThat(result.body, Is(upcomingFixtures))
     }
 
+    @Test
+    fun `'getLiveScoreForMatch' should return a MatchFacts object and OK`() {
+        val matchFacts = MatchFacts()
+
+        whenever(fixturesService.retrieveLiveScoreForMatch(1)).thenReturn(matchFacts)
+
+        val result = fixturesController.getLiveScoreForMatch(1)
+
+        assertThat(result.statusCode, Is(OK))
+        assertThat(result.body, Is(matchFacts))
+    }
+
+    @Test
+    fun `'getLiveScoreForMatch' should return NOT_FOUND if match cannot be found`() {
+        whenever(fixturesService.retrieveLiveScoreForMatch(1)).thenReturn(null)
+
+        val result = fixturesController.getLiveScoreForMatch(1)
+
+        assertThat(result.statusCode, Is(NOT_FOUND))
+    }
+
 
 }

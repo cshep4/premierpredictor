@@ -20,7 +20,7 @@ class ApiRequester {
 
         return result.fold({ data ->
             return@fold ObjectMapper().readValue(data, Array<MatchFacts>::class.java).toList()
-        }, { err ->
+        }, {
             return@fold emptyList()
         })
     }
@@ -31,7 +31,18 @@ class ApiRequester {
 
         return result.fold({ data ->
             return@fold ObjectMapper().readValue(data, Commentary::class.java)
-        }, { err ->
+        }, {
+            return@fold null
+        })
+    }
+
+    fun retrieveMatch(id: String): MatchFacts? {
+        val url = "$API_URL$id?Authorization=$API_KEY"
+        val (req, res, result) = url.httpGet().responseString()
+
+        return result.fold({ data ->
+            return@fold ObjectMapper().readValue(data, MatchFacts::class.java)
+        }, {
             return@fold null
         })
     }

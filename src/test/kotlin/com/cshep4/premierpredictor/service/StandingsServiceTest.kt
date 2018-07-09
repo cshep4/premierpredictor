@@ -111,12 +111,12 @@ internal class StandingsServiceTest {
         val userLeague = UserLeague(leagueId = LEAGUE_PIN, userId = USER_ID)
         val league = League(id = LEAGUE_PIN, name = LEAGUE_NAME)
 
-        whenever(addLeagueService.addLeagueToDb(LEAGUE_NAME)).thenReturn(league)
+        whenever(addLeagueService.addLeagueToDb(USER_ID, LEAGUE_NAME)).thenReturn(league)
         whenever(joinLeagueService.joinLeague(userLeague)).thenReturn(userLeague)
 
         val result = standingsService.addLeague(LEAGUE_NAME, USER_ID)
 
-        verify(addLeagueService).addLeagueToDb(LEAGUE_NAME)
+        verify(addLeagueService).addLeagueToDb(USER_ID, LEAGUE_NAME)
         verify(joinLeagueService).joinLeague(userLeague)
         assertThat(result, `is`(league))
     }

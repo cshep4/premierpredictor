@@ -82,7 +82,7 @@ class StandingsService {
     }
 
     fun addLeague(name: String, id: Long) : League {
-        val league = addLeagueService.addLeagueToDb(name)
+        val league = addLeagueService.addLeagueToDb(id, name)
 
         val userLeague = UserLeague(leagueId = league.id, userId = id)
         joinLeagueService.joinLeague(userLeague)

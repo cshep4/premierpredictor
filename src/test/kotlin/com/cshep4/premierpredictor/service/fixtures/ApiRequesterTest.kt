@@ -87,4 +87,29 @@ internal class ApiRequesterTest {
 
         assertThat(fixturesApiResult, Is(nullValue()))
     }
+
+    @Test
+    fun `'retrieveMatch' parses API result and returns object`() {
+        val match = MatchFacts()
+        val jsonResponse = ObjectMapper().writeValueAsString(match)
+
+        every { client.executeRequest(any()).httpStatusCode } returns 200
+        every { client.executeRequest(any()).httpResponseMessage } returns "OK"
+        every { client.executeRequest(any()).data } returns jsonResponse.toByteArray()
+
+        val apiResult = fixturesApiService.retrieveMatch("1")
+
+        assertThat(apiResult, Is(match))
+    }
+
+    @Test
+    fun `'retrieveMatch' returns null if API does not return OK`() {
+        every { client.executeRequest(any()).httpStatusCode } returns 500
+        every { client.executeRequest(any()).httpResponseMessage } returns "Internal Server Error"
+        every { client.executeRequest(any()).data } returns "".toByteArray()
+
+        val fixturesApiResult = fixturesApiService.retrieveMatch("1")
+
+        assertThat(fixturesApiResult, Is(nullValue()))
+    }
 }
