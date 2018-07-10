@@ -6,6 +6,7 @@ import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.PredictionSummary
 import com.cshep4.premierpredictor.entity.PredictionEntity
 import com.cshep4.premierpredictor.repository.sql.PredictionsRepository
+import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

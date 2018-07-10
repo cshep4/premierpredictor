@@ -1,8 +1,8 @@
 package com.cshep4.premierpredictor.controller
 
 import com.cshep4.premierpredictor.data.*
-import com.cshep4.premierpredictor.service.ResetPasswordService
-import com.cshep4.premierpredictor.service.UserService
+import com.cshep4.premierpredictor.service.user.ResetPasswordService
+import com.cshep4.premierpredictor.service.user.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity

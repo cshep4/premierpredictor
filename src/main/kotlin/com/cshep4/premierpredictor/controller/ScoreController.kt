@@ -1,7 +1,7 @@
 package com.cshep4.premierpredictor.controller
 
 import com.cshep4.premierpredictor.data.UserRank
-import com.cshep4.premierpredictor.service.ScoreService
+import com.cshep4.premierpredictor.service.user.ScoreService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping

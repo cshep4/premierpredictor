@@ -1,10 +1,11 @@
 package com.cshep4.premierpredictor.controller
 
+import com.cshep4.premierpredictor.component.fixtures.MatchResults
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
-import com.cshep4.premierpredictor.service.FixturesService
-import com.cshep4.premierpredictor.service.UserScoreService
+import com.cshep4.premierpredictor.service.fixtures.FixturesService
+import com.cshep4.premierpredictor.service.user.UserScoreService
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
@@ -28,13 +29,16 @@ internal class FixturesControllerTest {
     @Mock
     lateinit var userScoreService: UserScoreService
 
+    @Mock
+    lateinit var matchResults: MatchResults
+
     @InjectMocks
     private lateinit var fixturesController: FixturesController
 
     @Test
     fun `'updateFixtures' returns UPDATED with the matches in the request body when the fixtures are successfully updated`() {
         val matches = listOf(Match())
-        whenever(fixturesService.update()).thenReturn(matches)
+        whenever(matchResults.update()).thenReturn(matches)
 
         val result = fixturesController.updateFixtures(true)
 
@@ -45,7 +49,7 @@ internal class FixturesControllerTest {
 
     @Test
     fun `'updateFixtures' returns BAD_REQUEST fixtures are not updated`() {
-        whenever(fixturesService.update()).thenReturn(emptyList())
+        whenever(matchResults.update()).thenReturn(emptyList())
 
         val result = fixturesController.updateFixtures(true)
 

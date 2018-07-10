@@ -1,8 +1,8 @@
 package com.cshep4.premierpredictor.controller
 
 import com.cshep4.premierpredictor.data.*
-import com.cshep4.premierpredictor.service.ResetPasswordService
-import com.cshep4.premierpredictor.service.UserService
+import com.cshep4.premierpredictor.service.user.ResetPasswordService
+import com.cshep4.premierpredictor.service.user.UserService
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.nullValue

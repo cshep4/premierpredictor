@@ -1,0 +1,57 @@
+package com.cshep4.premierpredictor.component.matchfacts
+
+import com.cshep4.premierpredictor.component.api.ApiRequester
+import com.cshep4.premierpredictor.component.time.Time
+import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
+import com.cshep4.premierpredictor.entity.MatchFactsEntity
+import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
+
+@Component
+class MatchUpdater {
+    @Autowired
+    private lateinit var fixtureApiRequester: ApiRequester
+
+    @Autowired
+    private lateinit var matchFactsRepository: MatchFactsRepository
+
+    @Autowired
+    private lateinit var time: Time
+
+    fun updateUpcomingMatchesWithLatestScores(upcomingMatches: List<MatchFacts>): List<MatchFacts> {
+        val apiResult = fixtureApiRequester.retrieveFixtures()
+
+        val updated = upcomingMatches
+                .filter { it.isInNeedOfUpdate() }
+                .map { m -> mergeWithLatestVersion(m, apiResult.firstOrNull { it.id == m.id }) }
+
+        val notUpdated = upcomingMatches.filter { !it.isInNeedOfUpdate() }
+
+        val updatedMatchEntities = updated.map { MatchFactsEntity.fromDto(it) }
+        matchFactsRepository.saveAll(updatedMatchEntities)
+
+        return listOf(notUpdated, updated).flatten()
+    }
+
+    private fun mergeWithLatestVersion(match: MatchFacts, apiMatch: MatchFacts?): MatchFacts {
+        if (apiMatch == null) {
+            return match
+        }
+
+        apiMatch.commentary = match.commentary
+        apiMatch.lastUpdated = time.localDateTimeNow()
+
+        return apiMatch
+    }
+
+    fun updateMatch(id: Long, match: MatchFacts?): MatchFacts? {
+        val apiResult = fixtureApiRequester.retrieveMatch(id.toString()) ?: return match
+        apiResult.lastUpdated = time.localDateTimeNow()
+        apiResult.commentary = match?.commentary
+
+        matchFactsRepository.save(MatchFactsEntity.fromDto(apiResult))
+
+        return apiResult
+    }
+}

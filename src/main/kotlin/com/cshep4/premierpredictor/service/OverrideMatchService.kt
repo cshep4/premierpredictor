@@ -1,5 +1,6 @@
 package com.cshep4.premierpredictor.service
 
+import com.cshep4.premierpredictor.component.fixtures.FixturesApi
 import com.cshep4.premierpredictor.component.override.MatchOverrideMerger
 import com.cshep4.premierpredictor.data.MatchWithOverride
 import com.cshep4.premierpredictor.data.OverrideMatch
@@ -14,7 +15,7 @@ class OverrideMatchService {
     private lateinit var overrideMatchRepository: OverrideMatchRepository
 
     @Autowired
-    private lateinit var fixturesService: FixturesService
+    private lateinit var fixturesApi: FixturesApi
 
     @Autowired
     private lateinit var matchOverrideMerger: MatchOverrideMerger
@@ -32,7 +33,7 @@ class OverrideMatchService {
     }
 
     fun retrieveAllMatchesWithOverrideScores() : List<MatchWithOverride> {
-        val matches = fixturesService.retrieveMatchesFromApi()
+        val matches = fixturesApi.retrieveMatches()
 
         if (matches.isEmpty()) {
             return emptyList()

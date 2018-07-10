@@ -1,10 +1,9 @@
-package com.cshep4.premierpredictor.service
+package com.cshep4.premierpredictor.component.leaguetable
 
-import com.cshep4.premierpredictor.component.leaguetable.LeagueTableCalculator
-import com.cshep4.premierpredictor.component.leaguetable.LeagueTableCollector
 import com.cshep4.premierpredictor.data.LeagueTable
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
+import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat

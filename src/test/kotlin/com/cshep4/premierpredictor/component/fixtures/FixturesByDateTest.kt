@@ -10,8 +10,11 @@ import java.time.LocalDateTime
 internal class FixturesByDateTest {
     private val fixturesByDate = FixturesByDate()
 
+    /**
+     * May fail if time is passed 8pm
+     */
     @Test
-    fun `'format' puts matches in order of time and groups them by date in the correct format (may fail if time is passed 8pm)`() {
+    fun `'format' puts matches in order of time and groups them by date in the correct format`() {
         val match1 = MatchFacts()
         match1.setDateTime(LocalDateTime.now().plusDays(1).plusHours(1))
         val match2 = MatchFacts()

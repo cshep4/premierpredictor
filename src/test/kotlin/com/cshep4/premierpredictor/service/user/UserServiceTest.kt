@@ -1,4 +1,4 @@
-package com.cshep4.premierpredictor.service
+package com.cshep4.premierpredictor.service.user
 
 import com.cshep4.premierpredictor.data.SignUpUser
 import com.cshep4.premierpredictor.data.User

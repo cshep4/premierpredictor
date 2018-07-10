@@ -1,5 +1,6 @@
 package com.cshep4.premierpredictor.service
 
+import com.cshep4.premierpredictor.component.fixtures.FixturesApi
 import com.cshep4.premierpredictor.component.override.MatchOverrideMerger
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.MatchWithOverride
@@ -24,7 +25,7 @@ internal class OverrideMatchServiceTest {
     private lateinit var overrideMatchRepository: OverrideMatchRepository
 
     @Mock
-    private lateinit var fixturesService: FixturesService
+    private lateinit var fixturesApi: FixturesApi
 
     @Mock
     private lateinit var matchOverrideMerger: MatchOverrideMerger
@@ -73,7 +74,7 @@ internal class OverrideMatchServiceTest {
         val overrideEntities = overrides.map { OverrideMatchEntity.fromDto(it) }
         val mergedMatches = listOf(MatchWithOverride())
 
-        whenever(fixturesService.retrieveMatchesFromApi()).thenReturn(matches)
+        whenever(fixturesApi.retrieveMatches()).thenReturn(matches)
         whenever(overrideMatchRepository.findAll()).thenReturn(overrideEntities)
         whenever(matchOverrideMerger.merge(matches, overrides)).thenReturn(mergedMatches)
 
@@ -81,20 +82,20 @@ internal class OverrideMatchServiceTest {
 
         assertThat(result, `is`(mergedMatches))
 
-        verify(fixturesService).retrieveMatchesFromApi()
+        verify(fixturesApi).retrieveMatches()
         verify(overrideMatchRepository).findAll()
         verify(matchOverrideMerger).merge(matches, overrides)
     }
 
     @Test
     fun `'retrieveAllMatchesWithOverrideScores' returns empty list if no result is returned from API`() {
-        whenever(fixturesService.retrieveMatchesFromApi()).thenReturn(emptyList())
+        whenever(fixturesApi.retrieveMatches()).thenReturn(emptyList())
 
         val result = overrideMatchService.retrieveAllMatchesWithOverrideScores()
 
         assertThat(result, `is`(emptyList()))
 
-        verify(fixturesService).retrieveMatchesFromApi()
+        verify(fixturesApi).retrieveMatches()
         verify(overrideMatchRepository, times(0)).findAll()
         verify(matchOverrideMerger, times(0)).merge(any(), any())
     }

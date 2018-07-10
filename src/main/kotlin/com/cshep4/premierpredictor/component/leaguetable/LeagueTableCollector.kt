@@ -2,7 +2,7 @@ package com.cshep4.premierpredictor.component.leaguetable
 
 import com.cshep4.premierpredictor.data.LeagueTable
 import com.cshep4.premierpredictor.data.Match
-import com.cshep4.premierpredictor.service.FixturesService
+import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

@@ -3,7 +3,7 @@ package com.cshep4.premierpredictor.security
 import com.cshep4.premierpredictor.constant.SecurityConstants.FIXTURES_UPDATE_URL
 import com.cshep4.premierpredictor.constant.SecurityConstants.SET_USED_TOKEN_URL
 import com.cshep4.premierpredictor.constant.SecurityConstants.SIGN_UP_URL
-import com.cshep4.premierpredictor.service.UserService
+import com.cshep4.premierpredictor.service.user.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.http.HttpMethod.*

@@ -1,4 +1,4 @@
-package com.cshep4.premierpredictor.service
+package com.cshep4.premierpredictor.service.user
 
 import com.cshep4.premierpredictor.repository.sql.UserRepository
 import com.nhaarman.mockito_kotlin.whenever

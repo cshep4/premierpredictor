@@ -9,5 +9,4 @@ class FixtureFormatter {
     fun format(fixturesApiResult: List<MatchFacts>): List<Match> {
         return fixturesApiResult.map { it.toMatch() }
     }
-
 }

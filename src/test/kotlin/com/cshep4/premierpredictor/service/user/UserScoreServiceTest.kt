@@ -1,10 +1,12 @@
-package com.cshep4.premierpredictor.component.score
+package com.cshep4.premierpredictor.service.user
 
+import com.cshep4.premierpredictor.component.score.LeagueTableScoreCalculator
+import com.cshep4.premierpredictor.component.score.MatchScoreCalculator
+import com.cshep4.premierpredictor.component.score.WinnerScoreCalculator
 import com.cshep4.premierpredictor.entity.MatchPredictionResultEntity
 import com.cshep4.premierpredictor.entity.UserEntity
 import com.cshep4.premierpredictor.repository.sql.PredictedMatchRepository
 import com.cshep4.premierpredictor.repository.sql.UserRepository
-import com.cshep4.premierpredictor.service.UserScoreService
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Test

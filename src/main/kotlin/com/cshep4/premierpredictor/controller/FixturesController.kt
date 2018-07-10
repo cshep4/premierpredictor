@@ -1,12 +1,13 @@
 package com.cshep4.premierpredictor.controller
 
+import com.cshep4.premierpredictor.component.fixtures.MatchResults
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchFactsEntity
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
-import com.cshep4.premierpredictor.service.FixturesService
-import com.cshep4.premierpredictor.service.UserScoreService
+import com.cshep4.premierpredictor.service.fixtures.FixturesService
+import com.cshep4.premierpredictor.service.user.UserScoreService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.ResponseEntity
@@ -25,11 +26,14 @@ class FixturesController {
     @Autowired
     lateinit var matchFactsRepository: MatchFactsRepository
 
+    @Autowired
+    lateinit var matchResults: MatchResults
+
     private fun doScoreUpdate(score: Boolean?): Boolean = score != null && score
 
     @PutMapping("/update")
     fun updateFixtures(@RequestParam("score") score: Boolean?) : ResponseEntity<List<Match>> {
-        val fixtures = fixturesService.update()
+        val fixtures = matchResults.update()
 
         if (!fixtures.isEmpty() && doScoreUpdate(score)) {
             userScoreService.updateScores()

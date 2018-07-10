@@ -1,7 +1,7 @@
 package com.cshep4.premierpredictor.controller
 
 import com.cshep4.premierpredictor.data.UserRank
-import com.cshep4.premierpredictor.service.ScoreService
+import com.cshep4.premierpredictor.service.user.ScoreService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
