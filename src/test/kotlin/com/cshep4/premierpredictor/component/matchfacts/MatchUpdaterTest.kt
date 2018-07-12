@@ -6,10 +6,13 @@ import com.cshep4.premierpredictor.data.api.live.commentary.Commentary
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchFactsEntity
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
+import com.nhaarman.mockito_kotlin.timeout
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import kotlinx.coroutines.experimental.runBlocking
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,7 +46,10 @@ internal class MatchUpdaterTest {
 
         whenever(fixtureApiRequester.retrieveMatch("1")).thenReturn(null)
 
-        val result = matchUpdater.updateMatch(1, currentlyStoredMatch)
+        var result: MatchFacts? = null
+        runBlocking {
+            result = matchUpdater.updateMatch(1, currentlyStoredMatch)
+        }
 
         assertThat(result, `is`(currentlyStoredMatch))
         verify(fixtureApiRequester).retrieveMatch("1")
@@ -65,10 +71,39 @@ internal class MatchUpdaterTest {
 
         val result = matchUpdater.updateMatch(1, currentlyStoredMatch)
 
+        timeout(1000)
+
         assertThat(result, `is`(expectedResult))
         verify(fixtureApiRequester).retrieveMatch("1")
         verify(time).localDateTimeNow()
         verify(matchFactsRepository).save(MatchFactsEntity.fromDto(expectedResult))
     }
 
+    @Test
+    fun `'retrieveMatchFromApi' will retrieve the match from the api`() {
+        val now = LocalDateTime.now().plusDays(1)
+
+        val apiResult = MatchFacts()
+        val expectedResult = MatchFacts(lastUpdated = now)
+
+        whenever(fixtureApiRequester.retrieveMatch("1")).thenReturn(apiResult)
+        whenever(time.localDateTimeNow()).thenReturn(now)
+
+        val result = matchUpdater.retrieveMatchFromApi("1")
+
+        assertThat(result, `is`(expectedResult))
+        verify(fixtureApiRequester).retrieveMatch("1")
+        verify(time).localDateTimeNow()
+    }
+
+    @Test
+    fun `'retrieveMatchFromApi' will return null if nothing is retrieved from the api`() {
+        whenever(fixtureApiRequester.retrieveMatch("1")).thenReturn(null)
+
+        val result = matchUpdater.retrieveMatchFromApi("1")
+
+        assertThat(result, `is`(nullValue()))
+        verify(fixtureApiRequester).retrieveMatch("1")
+        verify(time, times(0)).localDateTimeNow()
+    }
 }

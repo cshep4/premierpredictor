@@ -128,9 +128,4 @@ data class MatchFacts(
 			0
 		}
 	}
-
-	@JsonIgnore
-	fun isInNeedOfUpdate(): Boolean {
-		return lastUpdated!!.isBefore(LocalDateTime.now().minusSeconds(20))
-	}
 }

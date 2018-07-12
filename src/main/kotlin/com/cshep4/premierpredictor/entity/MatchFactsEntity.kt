@@ -67,7 +67,7 @@ data class MatchFactsEntity(
         var commentary: Commentary? = null,
 
         @DynamoDBTypeConverted( converter = LocalDateTimeConverter::class )
-        var lastUpdated: LocalDateTime? = null
+        var lastUpdated: LocalDateTime? = LocalDateTime.now()
 ){
     fun toDto(): MatchFacts = MatchFacts(
             penaltyVisitor = this.penaltyVisitor,

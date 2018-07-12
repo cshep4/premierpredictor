@@ -8,6 +8,7 @@ import com.cshep4.premierpredictor.entity.MatchFactsEntity
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.user.UserScoreService
+import kotlinx.coroutines.experimental.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.ResponseEntity
@@ -35,8 +36,10 @@ class FixturesController {
     fun updateFixtures(@RequestParam("score") score: Boolean?) : ResponseEntity<List<Match>> {
         val fixtures = matchResults.update()
 
-        if (!fixtures.isEmpty() && doScoreUpdate(score)) {
-            userScoreService.updateScores()
+        launch {
+            if (!fixtures.isEmpty() && doScoreUpdate(score)) {
+                userScoreService.updateScores()
+            }
         }
 
         return when {

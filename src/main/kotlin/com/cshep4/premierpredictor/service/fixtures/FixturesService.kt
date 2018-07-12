@@ -6,6 +6,7 @@ import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
+import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.extension.isToday
 import com.cshep4.premierpredictor.extension.isUpcoming
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
@@ -62,7 +63,7 @@ class FixturesService {
             return emptyMap()
         }
 
-        if (upcomingMatches.any { it.isInNeedOfUpdate() }) {
+        if (upcomingMatches.any { it.lastUpdated!!.isInNeedOfUpdate() }) {
             val updatedMatches = matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
             return fixturesByDate.format(updatedMatches)
         }
@@ -75,7 +76,7 @@ class FixturesService {
                 .map { it.toDto() }
                 .orElse(null)
 
-        if (match == null || match.isInNeedOfUpdate()) {
+        if (match == null || match.lastUpdated!!.isInNeedOfUpdate()) {
             return matchUpdater.updateMatch(id, match)
         }
 

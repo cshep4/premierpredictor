@@ -4,7 +4,9 @@ import com.cshep4.premierpredictor.component.api.ApiRequester
 import com.cshep4.premierpredictor.component.time.Time
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchFactsEntity
+import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
+import kotlinx.coroutines.experimental.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -23,13 +25,16 @@ class MatchUpdater {
         val apiResult = fixtureApiRequester.retrieveFixtures()
 
         val updated = upcomingMatches
-                .filter { it.isInNeedOfUpdate() }
+                .filter { it.lastUpdated!!.isInNeedOfUpdate() }
                 .map { m -> mergeWithLatestVersion(m, apiResult.firstOrNull { it.id == m.id }) }
 
-        val notUpdated = upcomingMatches.filter { !it.isInNeedOfUpdate() }
+        val notUpdated = upcomingMatches.filter { !it.lastUpdated!!.isInNeedOfUpdate() }
 
         val updatedMatchEntities = updated.map { MatchFactsEntity.fromDto(it) }
-        matchFactsRepository.saveAll(updatedMatchEntities)
+
+        launch {
+            matchFactsRepository.saveAll(updatedMatchEntities)
+        }
 
         return listOf(notUpdated, updated).flatten()
     }
@@ -46,11 +51,19 @@ class MatchUpdater {
     }
 
     fun updateMatch(id: Long, match: MatchFacts?): MatchFacts? {
-        val apiResult = fixtureApiRequester.retrieveMatch(id.toString()) ?: return match
-        apiResult.lastUpdated = time.localDateTimeNow()
+        val apiResult = retrieveMatchFromApi(id.toString()) ?: return match
         apiResult.commentary = match?.commentary
 
-        matchFactsRepository.save(MatchFactsEntity.fromDto(apiResult))
+        launch {
+            matchFactsRepository.save(MatchFactsEntity.fromDto(apiResult))
+        }
+
+        return apiResult
+    }
+
+    fun retrieveMatchFromApi(id: String): MatchFacts? {
+        val apiResult = fixtureApiRequester.retrieveMatch(id) ?: return null
+        apiResult.lastUpdated = time.localDateTimeNow()
 
         return apiResult
     }

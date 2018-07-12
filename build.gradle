@@ -1,6 +1,6 @@
 buildscript {
 	ext {
-		kotlinVersion = '1.2.20'
+		kotlinVersion = '1.2.51'
 		springBootVersion = '2.0.1.BUILD-SNAPSHOT'
 	}
 	repositories {
@@ -54,24 +54,24 @@ repositories {
 
 
 dependencies {
+	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	compile("org.jetbrains.kotlin:kotlin-reflect")
+	compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21"
 	compile('org.springframework.boot:spring-boot-starter-aop')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.springframework.boot:spring-boot-starter-websocket')
 	compile('com.fasterxml.jackson.module:jackson-module-kotlin')
-	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	compile("org.jetbrains.kotlin:kotlin-reflect")
 	compile("io.jsonwebtoken:jjwt:0.9.0")
 	compile("com.github.kittinunf.fuel:fuel:1.2.1")
+	compile 'com.sendgrid:sendgrid-java:4.0.1'
 	compile group: 'org.postgresql', name: 'postgresql', version: '42.1.1'
-	compileOnly('org.projectlombok:lombok')
+	compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.11.356'
+	compile group: 'com.github.spring-data-dynamodb', name: 'spring-data-dynamodb', version: '5.0.2'
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
 	testCompile group: 'com.nhaarman', name: 'mockito-kotlin', version: '1.5.0'
 	testCompile "io.mockk:mockk:1.7.15"
-	compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.21"
-	compile 'com.sendgrid:sendgrid-java:4.0.1'
-	compile group: 'com.amazonaws', name: 'aws-java-sdk-dynamodb', version: '1.11.356'
-	compile group: 'com.github.spring-data-dynamodb', name: 'spring-data-dynamodb', version: '5.0.2'
 }

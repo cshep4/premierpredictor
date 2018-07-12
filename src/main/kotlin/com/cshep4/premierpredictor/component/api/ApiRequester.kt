@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component
 class ApiRequester {
     fun retrieveFixtures(): List<MatchFacts> {
         val url = "$API_URL?from_date=$FROM_DATE&to_date=$TO_DATE&comp_id=$COMP_ID&Authorization=$API_KEY"
-        val (req, res, result) = url.httpGet().responseString()
+        val (_, _, result) = url.httpGet().responseString()
 
         return result.fold({ data ->
             return@fold ObjectMapper().readValue(data, Array<MatchFacts>::class.java).toList()
@@ -27,7 +27,7 @@ class ApiRequester {
 
     fun retrieveCommentary(id: String): Commentary? {
         val url = "$API_URL_COMMENTARY$id?Authorization=$API_KEY"
-        val (req, res, result) = url.httpGet().responseString()
+        val (_, _, result) = url.httpGet().responseString()
 
         return result.fold({ data ->
             return@fold ObjectMapper().readValue(data, Commentary::class.java)
@@ -38,7 +38,7 @@ class ApiRequester {
 
     fun retrieveMatch(id: String): MatchFacts? {
         val url = "$API_URL$id?Authorization=$API_KEY"
-        val (req, res, result) = url.httpGet().responseString()
+        val (_, _, result) = url.httpGet().responseString()
 
         return result.fold({ data ->
             return@fold ObjectMapper().readValue(data, MatchFacts::class.java)
