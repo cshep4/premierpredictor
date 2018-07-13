@@ -17,7 +17,7 @@ class LiveMatchController {
 
     @GetMapping("/{id}")
     fun getLiveMatchFacts(@PathVariable(value = "id") id: Long) : ResponseEntity<MatchFacts> {
-        val matchFacts = liveMatchService.retrieveLiveMatchFacts(id)
+        val matchFacts = liveMatchService.retrieveLiveMatchFacts(id.toString())
 
         return when (matchFacts) {
             null -> ResponseEntity.notFound().build()

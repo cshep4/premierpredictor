@@ -23,6 +23,10 @@ import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 internal class LiveMatchServiceTest {
+    companion object {
+        const val ID = "1"
+    }
+
     @Mock
     private lateinit var matchFactsRepository: MatchFactsRepository
 
@@ -40,13 +44,14 @@ internal class LiveMatchServiceTest {
         val commentary = Commentary(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE - 5))
         val matchFacts = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE - 5), commentary = commentary)
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(matchFacts))
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.of(matchFacts))
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(matchFacts.toDto()))
         verify(matchUpdater, times(0)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(0)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result!!))
     }
 
     @Test
@@ -55,14 +60,15 @@ internal class LiveMatchServiceTest {
         val matchFacts = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 5), commentary = commentary)
         val updatedMatch = MatchFacts()
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(matchFacts))
-        whenever(matchUpdater.retrieveMatchFromApi("1")).thenReturn(updatedMatch)
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.of(matchFacts))
+        whenever(matchUpdater.retrieveMatchFromApi(ID)).thenReturn(updatedMatch)
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(updatedMatch))
         verify(matchUpdater, times(1)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(0)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result!!))
     }
 
     @Test
@@ -74,14 +80,15 @@ internal class LiveMatchServiceTest {
         val expectedResult = matchFacts.toDto()
         expectedResult.commentary = updatedCommentary
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(matchFacts))
-        whenever(commentaryUpdater.retrieveCommentaryFromApi("1")).thenReturn(updatedCommentary)
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.of(matchFacts))
+        whenever(commentaryUpdater.retrieveCommentaryFromApi(ID)).thenReturn(updatedCommentary)
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(expectedResult))
         verify(matchUpdater, times(0)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(1)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result!!))
     }
 
     @Test
@@ -91,16 +98,17 @@ internal class LiveMatchServiceTest {
         val updatedMatch = MatchFacts()
         val updatedCommentary = Commentary()
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(matchFacts))
-        whenever(matchUpdater.retrieveMatchFromApi("1")).thenReturn(updatedMatch)
-        whenever(commentaryUpdater.retrieveCommentaryFromApi("1")).thenReturn(updatedCommentary)
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.of(matchFacts))
+        whenever(matchUpdater.retrieveMatchFromApi(ID)).thenReturn(updatedMatch)
+        whenever(commentaryUpdater.retrieveCommentaryFromApi(ID)).thenReturn(updatedCommentary)
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(updatedMatch))
         assertThat(result!!.commentary, `is`(updatedCommentary))
         verify(matchUpdater, times(1)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(1)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result))
     }
 
     @Test
@@ -108,14 +116,15 @@ internal class LiveMatchServiceTest {
         val commentary = Commentary(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE - 5))
         val matchFacts = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 5), commentary = commentary)
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(matchFacts))
-        whenever(matchUpdater.retrieveMatchFromApi("1")).thenReturn(null)
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.of(matchFacts))
+        whenever(matchUpdater.retrieveMatchFromApi(ID)).thenReturn(null)
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(matchFacts.toDto()))
         verify(matchUpdater, times(1)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(0)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result!!))
     }
 
     @Test
@@ -123,14 +132,15 @@ internal class LiveMatchServiceTest {
         val commentary = Commentary(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 5))
         val matchFacts = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE - 5), commentary = commentary)
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(matchFacts))
-        whenever(commentaryUpdater.retrieveCommentaryFromApi("1")).thenReturn(null)
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.of(matchFacts))
+        whenever(commentaryUpdater.retrieveCommentaryFromApi(ID)).thenReturn(null)
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(matchFacts.toDto()))
         verify(matchUpdater, times(0)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(1)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result!!))
     }
 
     @Test
@@ -138,16 +148,17 @@ internal class LiveMatchServiceTest {
         val commentary = Commentary(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 5))
         val matchFacts = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 5), commentary = commentary)
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(matchFacts))
-        whenever(matchUpdater.retrieveMatchFromApi("1")).thenReturn(null)
-        whenever(commentaryUpdater.retrieveCommentaryFromApi("1")).thenReturn(null)
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.of(matchFacts))
+        whenever(matchUpdater.retrieveMatchFromApi(ID)).thenReturn(null)
+        whenever(commentaryUpdater.retrieveCommentaryFromApi(ID)).thenReturn(null)
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(matchFacts.toDto()))
         assertThat(result!!.commentary, `is`(commentary))
         verify(matchUpdater, times(1)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(1)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result))
     }
 
     @Test
@@ -155,16 +166,17 @@ internal class LiveMatchServiceTest {
         val updatedMatch = MatchFacts()
         val commentary = Commentary()
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.empty())
-        whenever(matchUpdater.retrieveMatchFromApi("1")).thenReturn(updatedMatch)
-        whenever(commentaryUpdater.retrieveCommentaryFromApi("1")).thenReturn(commentary)
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.empty())
+        whenever(matchUpdater.retrieveMatchFromApi(ID)).thenReturn(updatedMatch)
+        whenever(commentaryUpdater.retrieveCommentaryFromApi(ID)).thenReturn(commentary)
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(updatedMatch))
         assertThat(result!!.commentary, `is`(commentary))
         verify(matchUpdater, times(1)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(1)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result))
     }
 
     @Test
@@ -175,14 +187,15 @@ internal class LiveMatchServiceTest {
         val expectedResult = matchFacts.toDto()
         expectedResult.commentary = commentary
 
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(matchFacts))
-        whenever(commentaryUpdater.retrieveCommentaryFromApi("1")).thenReturn(commentary)
+        whenever(matchFactsRepository.findById(ID)).thenReturn(Optional.of(matchFacts))
+        whenever(commentaryUpdater.retrieveCommentaryFromApi(ID)).thenReturn(commentary)
 
-        val result = liveMatchService.retrieveLiveMatchFacts(1)
+        val result = liveMatchService.retrieveLiveMatchFacts(ID)
 
         assertThat(result, `is`(expectedResult))
         assertThat(result!!.commentary, `is`(commentary))
         verify(matchUpdater, times(0)).retrieveMatchFromApi(any())
         verify(commentaryUpdater, times(1)).retrieveCommentaryFromApi(any())
+        verify(matchFactsRepository).save(MatchFactsEntity.fromDto(result))
     }
 }

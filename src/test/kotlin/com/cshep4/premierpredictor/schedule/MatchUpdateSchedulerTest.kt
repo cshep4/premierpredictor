@@ -1,8 +1,10 @@
 package com.cshep4.premierpredictor.schedule
 
+import com.cshep4.premierpredictor.constant.MatchConstants.LIVE_MATCH_SUBSCRIPTION
 import com.cshep4.premierpredictor.constant.MatchConstants.UPCOMING_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
+import com.cshep4.premierpredictor.service.livematch.LiveMatchService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
@@ -21,6 +23,9 @@ import java.time.LocalDate
 internal class MatchUpdateSchedulerTest {
     @Mock
     private lateinit var fixturesService: FixturesService
+
+    @Mock
+    private lateinit var liveMatchService: LiveMatchService
 
     @Mock
     private lateinit var template: SimpMessagingTemplate
@@ -74,7 +79,7 @@ internal class MatchUpdateSchedulerTest {
                 MatchFacts(id = "5", status = "66")
         )
 
-        whenever(fixturesService.retrieveLiveScoreForMatch(any())).thenReturn(matches[0])
+        whenever(liveMatchService.retrieveLiveMatchFacts(any())).thenReturn(matches[0])
                 .thenReturn(matches[1])
                 .thenReturn(matches[2])
                 .thenReturn(matches[3])
@@ -92,7 +97,34 @@ internal class MatchUpdateSchedulerTest {
         assertThat(currentlyPlaying.contains("5"), `is`(true))
         assertThat(currentlyPlaying.contains("6"), `is`(false))
 
-        verify(fixturesService, times(6)).retrieveLiveScoreForMatch(any())
+        verify(liveMatchService, times(6)).retrieveLiveMatchFacts(any())
         verify(template).convertAndSend(UPCOMING_SUBSCRIPTION, matches)
+    }
+
+    @Test
+    fun `'updateLiveScores' will send each match to the corresponding subscription`() {
+        matchUpdateScheduler.addLiveMatch(listOf("1","2","3","4","5", "6"))
+        val matches = listOf(
+                MatchFacts(id = "1", status = "66"),
+                MatchFacts(id = "2", status = "FT"),
+                MatchFacts(id = "3", status = ""),
+                MatchFacts(id = "4", status = "66"),
+                MatchFacts(id = "5", status = "66")
+        )
+
+        whenever(liveMatchService.retrieveLiveMatchFacts(any())).thenReturn(matches[0])
+                .thenReturn(matches[1])
+                .thenReturn(matches[2])
+                .thenReturn(matches[3])
+                .thenReturn(matches[4])
+                .thenReturn(null)
+
+        matchUpdateScheduler.updateLiveScores()
+
+        verify(template).convertAndSend(LIVE_MATCH_SUBSCRIPTION + "1", matches[0])
+        verify(template).convertAndSend(LIVE_MATCH_SUBSCRIPTION + "2", matches[1])
+        verify(template).convertAndSend(LIVE_MATCH_SUBSCRIPTION + "3", matches[2])
+        verify(template).convertAndSend(LIVE_MATCH_SUBSCRIPTION + "4", matches[3])
+        verify(template).convertAndSend(LIVE_MATCH_SUBSCRIPTION + "5", matches[4])
     }
 }

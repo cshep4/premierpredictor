@@ -4,9 +4,11 @@ import com.cshep4.premierpredictor.component.matchfacts.CommentaryUpdater
 import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
 import com.cshep4.premierpredictor.data.api.live.commentary.Commentary
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
+import com.cshep4.premierpredictor.entity.MatchFactsEntity
 import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -22,7 +24,7 @@ class LiveMatchService {
     @Autowired
     private lateinit var commentaryUpdater: CommentaryUpdater
 
-    fun retrieveLiveMatchFacts(id: Long): MatchFacts? {
+    fun retrieveLiveMatchFacts(id: String): MatchFacts? {
         return runBlocking {
             val storedMatch = matchFactsRepository
                     .findById(id.toString())
@@ -66,6 +68,10 @@ class LiveMatchService {
         matchFacts.commentary = when (updatedCommentary) {
             null -> storedMatch?.commentary
             else -> updatedCommentary
+        }
+
+        launch {
+            matchFactsRepository.save(MatchFactsEntity.fromDto(matchFacts))
         }
 
         return matchFacts

@@ -26,7 +26,7 @@ internal class LiveMatchControllerTest {
     fun `'getLiveMatchFacts' will get current match facts and return OK`() {
         val matchFacts = MatchFacts()
 
-        whenever(liveMatchService.retrieveLiveMatchFacts(1)).thenReturn(matchFacts)
+        whenever(liveMatchService.retrieveLiveMatchFacts("1")).thenReturn(matchFacts)
 
         val result = liveMatchController.getLiveMatchFacts(1)
 
@@ -36,7 +36,7 @@ internal class LiveMatchControllerTest {
 
     @Test
     fun `'getLiveMatchFacts' will NOT FOUND if match cannot be retrieved`() {
-        whenever(liveMatchService.retrieveLiveMatchFacts(1)).thenReturn(null)
+        whenever(liveMatchService.retrieveLiveMatchFacts("1")).thenReturn(null)
 
         val result = liveMatchController.getLiveMatchFacts(1)
 
