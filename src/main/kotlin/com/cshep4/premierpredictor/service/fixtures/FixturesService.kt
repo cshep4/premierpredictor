@@ -71,8 +71,8 @@ class FixturesService {
         return fixturesByDate.format(upcomingMatches)
     }
 
-    fun retrieveLiveScoreForMatch(id: Long) : MatchFacts? {
-        val match = matchFactsRepository.findById(id.toString())
+    fun retrieveLiveScoreForMatch(id: String) : MatchFacts? {
+        val match = matchFactsRepository.findById(id)
                 .map { it.toDto() }
                 .orElse(null)
 

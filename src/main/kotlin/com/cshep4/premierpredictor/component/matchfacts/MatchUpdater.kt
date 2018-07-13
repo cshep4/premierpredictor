@@ -40,9 +40,7 @@ class MatchUpdater {
     }
 
     private fun mergeWithLatestVersion(match: MatchFacts, apiMatch: MatchFacts?): MatchFacts {
-        if (apiMatch == null) {
-            return match
-        }
+        apiMatch ?: return match
 
         apiMatch.commentary = match.commentary
         apiMatch.lastUpdated = time.localDateTimeNow()
@@ -50,8 +48,8 @@ class MatchUpdater {
         return apiMatch
     }
 
-    fun updateMatch(id: Long, match: MatchFacts?): MatchFacts? {
-        val apiResult = retrieveMatchFromApi(id.toString()) ?: return match
+    fun updateMatch(id: String, match: MatchFacts?): MatchFacts? {
+        val apiResult = retrieveMatchFromApi(id) ?: return match
         apiResult.commentary = match?.commentary
 
         launch {

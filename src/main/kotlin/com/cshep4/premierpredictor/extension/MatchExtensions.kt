@@ -1,7 +1,10 @@
 package com.cshep4.premierpredictor.extension
 
 import com.cshep4.premierpredictor.data.PredictedMatch
+import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 
-fun List<PredictedMatch>.getMatchById(id: Long?): PredictedMatch {
-    return this.first { it.id == id }
-}
+fun List<PredictedMatch>.getMatchById(id: Long?): PredictedMatch =
+        first { it.id == id }
+
+fun MatchFacts?.isPlaying(): Boolean =
+        this?.status != null && status != "" && status != "FT"

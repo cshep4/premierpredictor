@@ -36,6 +36,7 @@ class WebSecurity : WebSecurityConfigurerAdapter() {
                 .antMatchers(POST, "/users/sendResetPassword").permitAll()
                 .antMatchers(POST, "/users/resetPassword").permitAll()
                 .antMatchers(GET, "console/").permitAll()
+                .antMatchers(GET, "/socket/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(JWTAuthenticationFilter(authenticationManager()))

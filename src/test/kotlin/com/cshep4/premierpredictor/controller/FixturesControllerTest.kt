@@ -4,6 +4,7 @@ import com.cshep4.premierpredictor.component.fixtures.MatchResults
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
+import com.cshep4.premierpredictor.schedule.MatchUpdateScheduler
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.user.UserScoreService
 import com.nhaarman.mockito_kotlin.times
@@ -31,6 +32,9 @@ internal class FixturesControllerTest {
 
     @Mock
     lateinit var matchResults: MatchResults
+
+    @Mock
+    lateinit var matchUpdateScheduler: MatchUpdateScheduler
 
     @InjectMocks
     private lateinit var fixturesController: FixturesController
@@ -117,10 +121,36 @@ internal class FixturesControllerTest {
     }
 
     @Test
+    fun `'getUpcomingFixtures' Added currently playing games to live matches set`() {
+        val upcomingFixtures = mapOf(
+                Pair(
+                        LocalDate.now(),
+                        listOf(
+                                MatchFacts(id = "1", status = ""),
+                                MatchFacts(id = "2", status = "FT"),
+                                MatchFacts(id = "3", status = "66"),
+                                MatchFacts(id = "4", status = "HT"),
+                                MatchFacts(id = "5", status = null)
+                        )
+                )
+        )
+
+        val expectedIds = listOf("3", "4")
+
+        whenever(fixturesService.retrieveAllUpcomingFixtures()).thenReturn(upcomingFixtures)
+
+        val result = fixturesController.getUpcomingFixtures()
+
+        assertThat(result.statusCode, Is(OK))
+        assertThat(result.body, Is(upcomingFixtures))
+        verify(matchUpdateScheduler).addLiveMatch(expectedIds)
+    }
+
+    @Test
     fun `'getLiveScoreForMatch' should return a MatchFacts object and OK`() {
         val matchFacts = MatchFacts()
 
-        whenever(fixturesService.retrieveLiveScoreForMatch(1)).thenReturn(matchFacts)
+        whenever(fixturesService.retrieveLiveScoreForMatch("1")).thenReturn(matchFacts)
 
         val result = fixturesController.getLiveScoreForMatch(1)
 
@@ -130,12 +160,10 @@ internal class FixturesControllerTest {
 
     @Test
     fun `'getLiveScoreForMatch' should return NOT_FOUND if match cannot be found`() {
-        whenever(fixturesService.retrieveLiveScoreForMatch(1)).thenReturn(null)
+        whenever(fixturesService.retrieveLiveScoreForMatch("1")).thenReturn(null)
 
         val result = fixturesController.getLiveScoreForMatch(1)
 
         assertThat(result.statusCode, Is(NOT_FOUND))
     }
-
-
 }

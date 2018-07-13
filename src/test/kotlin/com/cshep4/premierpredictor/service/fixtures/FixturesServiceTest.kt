@@ -3,6 +3,7 @@ package com.cshep4.premierpredictor.service.fixtures
 import com.cshep4.premierpredictor.component.fixtures.FixturesByDate
 import com.cshep4.premierpredictor.component.fixtures.PredictionMerger
 import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
+import com.cshep4.premierpredictor.constant.MatchConstants.REFRESH_RATE
 import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchEntity
@@ -199,11 +200,11 @@ internal class FixturesServiceTest {
 
     @Test
     fun `'retrieveLiveScoreForMatch' will retrieve the match from the db and return it if its been updated in the last 20 seconds`() {
-        val currentlyStoredMatch = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(19))
+        val currentlyStoredMatch = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE - 1))
 
         whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(currentlyStoredMatch))
 
-        val result = fixturesService.retrieveLiveScoreForMatch(1)
+        val result = fixturesService.retrieveLiveScoreForMatch("1")
 
         assertThat(result, Is(currentlyStoredMatch.toDto()))
         verify(matchUpdater, times(0)).updateMatch(any(), any())
@@ -214,38 +215,38 @@ internal class FixturesServiceTest {
         val expectedResult = MatchFacts()
 
         whenever(matchFactsRepository.findById("1")).thenReturn(Optional.empty())
-        whenever(matchUpdater.updateMatch(1, null)).thenReturn(expectedResult)
+        whenever(matchUpdater.updateMatch("1", null)).thenReturn(expectedResult)
 
-        val result = fixturesService.retrieveLiveScoreForMatch(1)
+        val result = fixturesService.retrieveLiveScoreForMatch("1")
 
         assertThat(result, Is(expectedResult))
-        verify(matchUpdater).updateMatch(1, null)
+        verify(matchUpdater).updateMatch("1", null)
     }
 
     @Test
     fun `'retrieveLiveScoreForMatch' will retrieve the match from the api and update the db if the match was last updated over 20 seconds ago`() {
-        val currentlyStoredMatchEntity = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(21))
+        val currentlyStoredMatchEntity = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 1))
         val currentlyStoredMatch = currentlyStoredMatchEntity.toDto()
 
         val expectedResult = MatchFacts()
 
         whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(currentlyStoredMatchEntity))
-        whenever(matchUpdater.updateMatch(1, currentlyStoredMatch)).thenReturn(expectedResult)
+        whenever(matchUpdater.updateMatch("1", currentlyStoredMatch)).thenReturn(expectedResult)
 
-        val result = fixturesService.retrieveLiveScoreForMatch(1)
+        val result = fixturesService.retrieveLiveScoreForMatch("1")
 
         assertThat(result, Is(expectedResult))
-        verify(matchUpdater).updateMatch(1, currentlyStoredMatch)
+        verify(matchUpdater).updateMatch("1", currentlyStoredMatch)
     }
 
     @Test
     fun `'retrieveLiveScoreForMatch' will return null if match is not found in db or api`() {
         whenever(matchFactsRepository.findById("1")).thenReturn(Optional.empty())
-        whenever(matchUpdater.updateMatch(1, null)).thenReturn(null)
+        whenever(matchUpdater.updateMatch("1", null)).thenReturn(null)
 
-        val result = fixturesService.retrieveLiveScoreForMatch(1)
+        val result = fixturesService.retrieveLiveScoreForMatch("1")
 
         assertThat(result, Is(nullValue()))
-        verify(matchUpdater).updateMatch(1, null)
+        verify(matchUpdater).updateMatch("1", null)
     }
 }

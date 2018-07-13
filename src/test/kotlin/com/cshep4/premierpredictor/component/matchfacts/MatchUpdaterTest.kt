@@ -2,6 +2,7 @@ package com.cshep4.premierpredictor.component.matchfacts
 
 import com.cshep4.premierpredictor.component.api.ApiRequester
 import com.cshep4.premierpredictor.component.time.Time
+import com.cshep4.premierpredictor.constant.MatchConstants.REFRESH_RATE
 import com.cshep4.premierpredictor.data.api.live.commentary.Commentary
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchFactsEntity
@@ -37,7 +38,7 @@ internal class MatchUpdaterTest {
     private lateinit var matchUpdater: MatchUpdater
 
     @Test
-    fun updateUpcomingMatchesWithLatestScores() {
+    fun `'updateUpcomingMatchesWithLatestScores' `() {
     }
 
     @Test
@@ -48,7 +49,7 @@ internal class MatchUpdaterTest {
 
         var result: MatchFacts? = null
         runBlocking {
-            result = matchUpdater.updateMatch(1, currentlyStoredMatch)
+            result = matchUpdater.updateMatch("1", currentlyStoredMatch)
         }
 
         assertThat(result, `is`(currentlyStoredMatch))
@@ -61,7 +62,7 @@ internal class MatchUpdaterTest {
     fun `'updateMatch' will retrieve the match from the api and update the db`() {
         val commentary = Commentary()
         val now = LocalDateTime.now().plusDays(1)
-        val currentlyStoredMatch = MatchFacts(lastUpdated = LocalDateTime.now().minusSeconds(21), commentary = commentary)
+        val currentlyStoredMatch = MatchFacts(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 1), commentary = commentary)
 
         val matchFromApi = MatchFacts(lastUpdated = LocalDateTime.now())
         val expectedResult = MatchFacts(lastUpdated = now, commentary = commentary)
@@ -69,7 +70,7 @@ internal class MatchUpdaterTest {
         whenever(fixtureApiRequester.retrieveMatch("1")).thenReturn(matchFromApi)
         whenever(time.localDateTimeNow()).thenReturn(now)
 
-        val result = matchUpdater.updateMatch(1, currentlyStoredMatch)
+        val result = matchUpdater.updateMatch("1", currentlyStoredMatch)
 
         timeout(1000)
 
