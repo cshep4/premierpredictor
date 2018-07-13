@@ -2,6 +2,7 @@ package com.cshep4.premierpredictor.schedule
 
 import com.cshep4.premierpredictor.constant.MatchConstants.LIVE_MATCH_SUBSCRIPTION
 import com.cshep4.premierpredictor.constant.MatchConstants.UPCOMING_SUBSCRIPTION
+import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.extension.isPlaying
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.livematch.LiveMatchService
@@ -42,6 +43,18 @@ class MatchUpdateScheduler {
 
         liveMatchIds.removeIf { id -> !liveMatches.find { it.id == id }.isPlaying() }
 
+        val finishedMatches = liveMatches
+                .filter { it.status == "FT" }
+                .map { it.toMatch() }
+
+        if (!finishedMatches.isEmpty()) {
+            fixturesService.saveMatches(finishedMatches)
+        }
+
+        sendUpdates(liveMatches)
+    }
+
+    private fun sendUpdates(liveMatches: List<MatchFacts>) {
         launch {
             liveMatches.forEach { template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + it.id, it) }
         }

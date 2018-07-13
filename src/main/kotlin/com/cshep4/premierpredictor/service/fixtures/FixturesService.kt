@@ -6,6 +6,7 @@ import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
+import com.cshep4.premierpredictor.entity.MatchEntity
 import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.extension.isToday
 import com.cshep4.premierpredictor.extension.isUpcoming
@@ -81,5 +82,12 @@ class FixturesService {
         }
 
         return match
+    }
+
+    fun saveMatches(matches: List<Match>): List<Match> {
+        val matchEntities = matches.map { MatchEntity.fromDto(it) }
+
+        return fixturesRepository.saveAll(matchEntities)
+                .map { it.toDto() }
     }
 }

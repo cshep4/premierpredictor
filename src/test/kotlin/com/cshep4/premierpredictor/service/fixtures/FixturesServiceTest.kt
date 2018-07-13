@@ -4,6 +4,7 @@ import com.cshep4.premierpredictor.component.fixtures.FixturesByDate
 import com.cshep4.premierpredictor.component.fixtures.PredictionMerger
 import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
 import com.cshep4.premierpredictor.constant.MatchConstants.REFRESH_RATE
+import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchEntity
@@ -248,5 +249,18 @@ internal class FixturesServiceTest {
 
         assertThat(result, Is(nullValue()))
         verify(matchUpdater).updateMatch("1", null)
+    }
+
+    @Test
+    fun `'saveMatches' saves matches to db`() {
+        val matches = listOf(Match())
+        val matchEntities = matches.map { MatchEntity.fromDto(it) }
+
+        whenever(fixturesRepository.saveAll(matchEntities)).thenReturn(matchEntities)
+
+        val result = fixturesService.saveMatches(matches)
+
+        assertThat(result, Is(matches))
+        verify(fixturesRepository).saveAll(matchEntities)
     }
 }
