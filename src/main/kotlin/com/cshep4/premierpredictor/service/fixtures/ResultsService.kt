@@ -1,13 +1,14 @@
-package com.cshep4.premierpredictor.component.fixtures
+package com.cshep4.premierpredictor.service.fixtures
 
+import com.cshep4.premierpredictor.component.fixtures.FixturesApi
+import com.cshep4.premierpredictor.component.fixtures.OverrideMatchScore
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.service.OverrideMatchService
-import com.cshep4.premierpredictor.service.fixtures.UpdateFixturesService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class MatchResults {
+class ResultsService {
     @Autowired
     private lateinit var overrideMatchService: OverrideMatchService
 

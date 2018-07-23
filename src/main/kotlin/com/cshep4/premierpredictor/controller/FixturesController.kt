@@ -1,12 +1,12 @@
 package com.cshep4.premierpredictor.controller
 
-import com.cshep4.premierpredictor.component.fixtures.MatchResults
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.extension.isPlaying
 import com.cshep4.premierpredictor.schedule.MatchUpdateScheduler
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
+import com.cshep4.premierpredictor.service.fixtures.ResultsService
 import com.cshep4.premierpredictor.service.user.UserScoreService
 import kotlinx.coroutines.experimental.launch
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,7 +25,7 @@ class FixturesController {
     lateinit var userScoreService: UserScoreService
 
     @Autowired
-    lateinit var matchResults: MatchResults
+    lateinit var resultsService: ResultsService
 
     @Autowired
     lateinit var matchUpdateScheduler: MatchUpdateScheduler
@@ -34,7 +34,7 @@ class FixturesController {
 
     @PutMapping("/update")
     fun updateFixtures(@RequestParam("score") score: Boolean?) : ResponseEntity<List<Match>> {
-        val fixtures = matchResults.update()
+        val fixtures = resultsService.update()
 
         launch {
             if (!fixtures.isEmpty() && doScoreUpdate(score)) {

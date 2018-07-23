@@ -1,9 +1,10 @@
-package com.cshep4.premierpredictor.component.fixtures
+package com.cshep4.premierpredictor.service.fixtures
 
+import com.cshep4.premierpredictor.component.fixtures.FixturesApi
+import com.cshep4.premierpredictor.component.fixtures.OverrideMatchScore
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.OverrideMatch
 import com.cshep4.premierpredictor.service.OverrideMatchService
-import com.cshep4.premierpredictor.service.fixtures.UpdateFixturesService
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
@@ -15,7 +16,7 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
-internal class MatchResultsTest {
+internal class ResultsServiceTest {
     @Mock
     private lateinit var fixturesApi: FixturesApi
 
@@ -29,7 +30,7 @@ internal class MatchResultsTest {
     private lateinit var overrideMatchScore: OverrideMatchScore
 
     @InjectMocks
-    private lateinit var matchResults: MatchResults
+    private lateinit var resultsService: ResultsService
 
     @Test
     fun `'update' returns list of matches when successfully updated to db`() {
@@ -41,7 +42,7 @@ internal class MatchResultsTest {
         whenever(overrideMatchService.retrieveAllOverriddenMatches()).thenReturn(overrides)
         whenever(overrideMatchScore.update(matches, overrides)).thenReturn(matches)
 
-        val result = matchResults.update()
+        val result = resultsService.update()
 
         verify(overrideMatchScore).update(matches, overrides)
 
@@ -52,7 +53,7 @@ internal class MatchResultsTest {
     fun `'update' returns empty list when fixtures are not formatted or no result from api`() {
         whenever(fixturesApi.retrieveMatches()).thenReturn(emptyList())
 
-        val result = matchResults.update()
+        val result = resultsService.update()
 
         assertThat(result, `is`(emptyList()))
     }
@@ -63,7 +64,7 @@ internal class MatchResultsTest {
 
         whenever(fixturesApi.retrieveMatches()).thenReturn(matches)
 
-        val result = matchResults.update()
+        val result = resultsService.update()
 
         assertThat(result, `is`(emptyList()))
     }

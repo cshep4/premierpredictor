@@ -112,4 +112,10 @@ object Queries {
             " SET password = ?1" +
             " WHERE email = ?2" +
             " AND signature = ?3"
+
+    const val QUERY_GET_PREDICTION_SUMMARY = "select count(case when hgoals > agoals then 1 else null end) as homeWin,\n" +
+            "  count(case when hgoals = agoals then 1 else null end) as draw,\n" +
+            "  count(case when hgoals < agoals then 1 else null end) as awayWin\n" +
+            " from prediction\n" +
+            " WHERE matchid = ?1"
 }

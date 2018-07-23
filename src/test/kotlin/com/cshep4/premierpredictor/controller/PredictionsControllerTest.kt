@@ -2,7 +2,7 @@ package com.cshep4.premierpredictor.controller
 
 import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.PredictionSummary
-import com.cshep4.premierpredictor.service.PredictionsService
+import com.cshep4.premierpredictor.service.prediction.PredictionsService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue

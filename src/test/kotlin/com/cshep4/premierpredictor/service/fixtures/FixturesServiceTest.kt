@@ -11,7 +11,7 @@ import com.cshep4.premierpredictor.entity.MatchEntity
 import com.cshep4.premierpredictor.entity.MatchFactsEntity
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.repository.sql.FixturesRepository
-import com.cshep4.premierpredictor.service.PredictionsService
+import com.cshep4.premierpredictor.service.prediction.PredictionsService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify

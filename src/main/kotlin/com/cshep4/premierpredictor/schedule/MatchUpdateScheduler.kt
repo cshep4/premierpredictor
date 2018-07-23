@@ -36,7 +36,7 @@ class MatchUpdateScheduler {
         addLiveMatch(matches)
     }
 
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 20000)
     fun updateLiveScores() {
         val liveMatches = liveMatchIds
                 .mapNotNull { liveMatchService.retrieveLiveMatchFacts(it) }

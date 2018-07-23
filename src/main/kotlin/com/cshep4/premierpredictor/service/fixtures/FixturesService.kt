@@ -12,7 +12,7 @@ import com.cshep4.premierpredictor.extension.isToday
 import com.cshep4.premierpredictor.extension.isUpcoming
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.repository.sql.FixturesRepository
-import com.cshep4.premierpredictor.service.PredictionsService
+import com.cshep4.premierpredictor.service.prediction.PredictionsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDate

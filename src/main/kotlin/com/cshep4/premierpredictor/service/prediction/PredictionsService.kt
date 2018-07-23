@@ -1,4 +1,4 @@
-package com.cshep4.premierpredictor.service
+package com.cshep4.premierpredictor.service.prediction
 
 import com.cshep4.premierpredictor.component.prediction.CreatePredictionSummary
 import com.cshep4.premierpredictor.data.Match
@@ -42,6 +42,8 @@ class PredictionsService {
     }
 
     fun retrievePredictionsByUserId(id: Long) : List<Prediction> = predictionsRepository.findByUserId(id).map { it.toDto() }
+
+    fun retrievePredictionByUserIdForMatch(id: Long, matchId: Long) : Prediction? = retrievePredictionsByUserId(id).firstOrNull { it.matchId == matchId }
 
     fun retrievePredictionsSummaryByUserId(id: Long) : PredictionSummary {
         val matches = fixturesService.retrieveAllMatches()

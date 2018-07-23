@@ -1,5 +1,6 @@
 package com.cshep4.premierpredictor.controller
 
+import com.cshep4.premierpredictor.data.MatchSummary
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.service.livematch.LiveMatchService
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,6 +23,16 @@ class LiveMatchController {
         return when (matchFacts) {
             null -> ResponseEntity.notFound().build()
             else -> ResponseEntity.ok(matchFacts)
+        }
+    }
+
+    @GetMapping("/summary/{matchId}/{id}")
+    fun getMatchSummary(@PathVariable(value = "matchId") matchId: Long, @PathVariable(value = "id") id: Long) : ResponseEntity<MatchSummary> {
+        val matchSummary = liveMatchService.retrieveMatchSummary(matchId.toString(), id.toString())
+
+        return when (matchSummary) {
+            null -> ResponseEntity.notFound().build()
+            else -> ResponseEntity.ok(matchSummary)
         }
     }
 }

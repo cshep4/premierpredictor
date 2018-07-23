@@ -1,5 +1,6 @@
 package com.cshep4.premierpredictor.controller
 
+import com.cshep4.premierpredictor.data.MatchSummary
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.service.livematch.LiveMatchService
 import com.nhaarman.mockito_kotlin.whenever
@@ -35,10 +36,32 @@ internal class LiveMatchControllerTest {
     }
 
     @Test
-    fun `'getLiveMatchFacts' will NOT FOUND if match cannot be retrieved`() {
+    fun `'getLiveMatchFacts' will return NOT FOUND if match cannot be retrieved`() {
         whenever(liveMatchService.retrieveLiveMatchFacts("1")).thenReturn(null)
 
         val result = liveMatchController.getLiveMatchFacts(1)
+
+        assertThat(result.statusCode, `is`(NOT_FOUND))
+        assertThat(result.body, `is`(nullValue()))
+    }
+
+    @Test
+    fun `'getMatchSummary' will return OK with a MatchSummary`() {
+        val match = MatchSummary()
+
+        whenever(liveMatchService.retrieveMatchSummary("1", "1")).thenReturn(match)
+
+        val result = liveMatchController.getMatchSummary(1, 1)
+
+        assertThat(result.statusCode, `is`(OK))
+        assertThat(result.body, `is`(match))
+    }
+
+    @Test
+    fun `'getMatchSummary' will return NOT FOUND if match cannot be retrieved`() {
+        whenever(liveMatchService.retrieveMatchSummary("1", "1")).thenReturn(null)
+
+        val result = liveMatchController.getMatchSummary(1, 1)
 
         assertThat(result.statusCode, `is`(NOT_FOUND))
         assertThat(result.body, `is`(nullValue()))

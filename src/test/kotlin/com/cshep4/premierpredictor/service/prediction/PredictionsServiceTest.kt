@@ -1,4 +1,4 @@
-package com.cshep4.premierpredictor.service
+package com.cshep4.premierpredictor.service.prediction
 
 import com.cshep4.premierpredictor.component.prediction.CreatePredictionSummary
 import com.cshep4.premierpredictor.data.Match
@@ -9,6 +9,7 @@ import com.cshep4.premierpredictor.repository.sql.PredictionsRepository
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
+import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -99,6 +100,26 @@ internal class PredictionsServiceTest {
         val result = predictionsService.retrievePredictionsByUserId(1)
 
         assertThat(result.isEmpty(), `is`(true))
+    }
+
+    @Test
+    fun `'retrievePredictionByUserIdForMatch' should retrieve match prediction for that user`() {
+        val predictionEntity = PredictionEntity(matchId = 1)
+        val predictions = listOf(predictionEntity)
+        whenever(predictionsRepository.findByUserId(1)).thenReturn(predictions)
+
+        val result = predictionsService.retrievePredictionByUserIdForMatch(1, 1)
+
+        assertThat(result, `is`(predictionEntity.toDto()))
+    }
+
+    @Test
+    fun `'retrievePredictionByUserIdForMatch' should return null if no match prediction exists for that user id`() {
+        whenever(predictionsRepository.findByUserId(1)).thenReturn(listOf(PredictionEntity(matchId = 3)))
+
+        val result = predictionsService.retrievePredictionByUserIdForMatch(1, 1)
+
+        assertThat(result, `is`(nullValue()))
     }
 
     @Test
