@@ -5,6 +5,7 @@ import com.cshep4.premierpredictor.data.api.live.commentary.Commentary
 import com.cshep4.premierpredictor.data.api.live.match.Event
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.utils.LocalDateTimeConverter
+import com.cshep4.premierpredictor.utils.MatchEventsConverter
 import org.springframework.data.annotation.Id
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -58,7 +59,7 @@ data class MatchFactsEntity(
 
         var venueId: String? = null,
 
-        @DynamoDBTypeConvertedJson
+        @DynamoDBTypeConverted( converter = MatchEventsConverter::class )
         var events: List<Event>? = null,
 
         var status: String? = null,
