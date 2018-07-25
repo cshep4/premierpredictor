@@ -1,9 +1,13 @@
 package com.cshep4.premierpredictor.entity
 
-import com.amazonaws.services.dynamodbv2.datamodeling.*
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted
 import com.cshep4.premierpredictor.data.api.live.commentary.Commentary
 import com.cshep4.premierpredictor.data.api.live.match.Event
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
+import com.cshep4.premierpredictor.utils.CommentaryConverter
 import com.cshep4.premierpredictor.utils.LocalDateTimeConverter
 import com.cshep4.premierpredictor.utils.MatchEventsConverter
 import org.springframework.data.annotation.Id
@@ -64,7 +68,7 @@ data class MatchFactsEntity(
 
         var status: String? = null,
 
-        @DynamoDBTypeConvertedJson
+        @DynamoDBTypeConverted( converter = CommentaryConverter::class )
         var commentary: Commentary? = null,
 
         @DynamoDBTypeConverted( converter = LocalDateTimeConverter::class )

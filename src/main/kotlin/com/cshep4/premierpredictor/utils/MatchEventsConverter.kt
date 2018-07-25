@@ -12,7 +12,7 @@ class MatchEventsConverter : DynamoDBTypeConverter<String, List<Event>> {
         return ObjectMapper().writeValueAsString(events)
     }
 
-    override fun unconvert(stringValue: String): List<Event> {
+    override fun unconvert(stringValue: String): List<Event>? {
 
         return ObjectMapper().readValue(stringValue, Array<Event>::class.java).toList()
     }
