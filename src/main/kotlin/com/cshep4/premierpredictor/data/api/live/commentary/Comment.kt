@@ -10,7 +10,7 @@ data class Comment(
 		val important: String? = null,
 
 		@JsonProperty("isgoal")
-		val isGoal: String? = null,
+		val goal: String? = null,
 
 		@JsonProperty("minute")
 		val minute: String? = null,
