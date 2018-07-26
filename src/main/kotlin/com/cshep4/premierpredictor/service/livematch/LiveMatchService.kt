@@ -46,13 +46,13 @@ class LiveMatchService {
 
             val matchFactsCoRoutine = async {
                 if (doesMatchFactsNeedUpdating(storedMatch)) {
-                    updatedMatch = matchUpdater.retrieveMatchFromApi(id.toString())
+                    updatedMatch = matchUpdater.retrieveMatchFromApi(id)
                 }
             }
 
             val commentaryCoRoutine = async {
                 if (doesCommentaryNeedUpdating(storedMatch)) {
-                    updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id.toString())
+                    updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
                 }
             }
 
@@ -78,9 +78,6 @@ class LiveMatchService {
             null -> storedMatch?.commentary
             else -> updatedCommentary
         }
-
-//        val fileContent = this::class.java.classLoader.getResource("commentary.json").readText()
-//        matchFacts.commentary = ObjectMapper().readValue(fileContent, Commentary::class.java).also { it.lastUpdated = LocalDateTime.now() }
 
         launch {
             matchFactsRepository.save(MatchFactsEntity.fromDto(matchFacts))

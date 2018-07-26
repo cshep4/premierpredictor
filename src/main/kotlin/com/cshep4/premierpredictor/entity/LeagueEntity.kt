@@ -1,13 +1,14 @@
 package com.cshep4.premierpredictor.entity
 
 import com.cshep4.premierpredictor.data.League
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "League")
 data class LeagueEntity (
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long = 0,
         val name: String = ""
 ){
