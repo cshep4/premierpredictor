@@ -5,6 +5,7 @@ import com.cshep4.premierpredictor.constant.MatchConstants.UPCOMING_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.extension.isPlaying
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
+import com.cshep4.premierpredictor.service.fixtures.ResultsService
 import com.cshep4.premierpredictor.service.livematch.LiveMatchService
 import kotlinx.coroutines.experimental.launch
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,6 +26,9 @@ class MatchUpdateScheduler {
     @Autowired
     private lateinit var template: SimpMessagingTemplate
 
+    @Autowired
+    private lateinit var resultsService: ResultsService
+
     @Scheduled(cron = "0 1,31 * * * *")
     fun getMatchesCurrentlyPlaying() {
         val matches = fixturesService.retrieveAllUpcomingFixtures()
@@ -34,6 +38,11 @@ class MatchUpdateScheduler {
                 .map { it.id!! }
 
         addLiveMatch(matches)
+    }
+
+    @Scheduled(cron = "0 0 3 * * ?", zone = "GMT")
+    fun updateMatchesAt3amEachDay() {
+        resultsService.update()
     }
 
     @Scheduled(fixedDelay = 20000)

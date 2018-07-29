@@ -4,6 +4,7 @@ import com.cshep4.premierpredictor.constant.MatchConstants.LIVE_MATCH_SUBSCRIPTI
 import com.cshep4.premierpredictor.constant.MatchConstants.UPCOMING_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
+import com.cshep4.premierpredictor.service.fixtures.ResultsService
 import com.cshep4.premierpredictor.service.livematch.LiveMatchService
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.times
@@ -29,6 +30,9 @@ internal class MatchUpdateSchedulerTest {
 
     @Mock
     private lateinit var template: SimpMessagingTemplate
+
+    @Mock
+    private lateinit var resultsService: ResultsService
 
     @InjectMocks
     private lateinit var matchUpdateScheduler: MatchUpdateScheduler
@@ -153,5 +157,12 @@ internal class MatchUpdateSchedulerTest {
                 .map { it.toMatch() }
 
         verify(fixturesService).saveMatches(expectedUpdatedMatches)
+    }
+
+    @Test
+    fun `'updateMatchesAt3amEachDay' will run the fixture updater once a day at 3am UK time`() {
+        matchUpdateScheduler.updateMatchesAt3amEachDay()
+
+        verify(resultsService).update()
     }
 }

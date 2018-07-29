@@ -54,6 +54,7 @@ data class UserEntity (
                 email = dto.email,
                 password = dto.password,
                 predictedWinner = dto.predictedWinner,
-                score = dto.score)
+                score = dto.score,
+                joined = LocalDateTime.now())
     }
 }
