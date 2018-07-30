@@ -13,6 +13,7 @@ import com.cshep4.premierpredictor.extension.isUpcoming
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.repository.sql.FixturesRepository
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
+import kotlinx.coroutines.experimental.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -64,9 +65,11 @@ class FixturesService {
             return emptyMap()
         }
 
-        if (upcomingMatches.any { it.lastUpdated!!.isInNeedOfUpdate() }) {
-            val updatedMatches = matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
-            return fixturesByDate.format(updatedMatches)
+        launch {
+            if (upcomingMatches.any { it.lastUpdated!!.isInNeedOfUpdate() }) {
+                matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
+//            return fixturesByDate.format(updatedMatches)
+            }
         }
 
         return fixturesByDate.format(upcomingMatches)
