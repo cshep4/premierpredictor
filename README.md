@@ -8,7 +8,7 @@ Premier League 18/19 predictor app, designed for users to correctly predict all 
 
 - This is built using the Ionic framework, with back-end APIs written in Kotlin using Spring Boot.
 - The back-end is fully unit tested using TDD and is currently being hosted on Heroku.
-- The database used to store user data and match results is using PostgresSQL
+- The database used to store user data and match results is using PostgreSQL
 - A noSQL DynamoDB database is used to store the live match stat data.
 - Websockets are used to send the live match data automatically to the user's device when the match is in-play.
 - Spring Boot Scheduler is used to automatically check if games are in-play and to retrieve the live data.
