@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Clock
 import java.time.LocalDateTime
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 @Service
 class PredictionsService {
@@ -23,6 +25,9 @@ class PredictionsService {
     @Autowired
     private lateinit var createPredictionSummary: CreatePredictionSummary
 
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
+
     private lateinit var matches: List<Match>
 
     fun savePredictions(predictions: List<Prediction>) : List<Prediction> {
@@ -32,7 +37,11 @@ class PredictionsService {
                 .filter { matchYetToPlay(it.matchId!!) }
                 .map { PredictionEntity.fromDto(it) }
 
-        return predictionsRepository.saveAll(predictionEntities).map { it.toDto() }
+        val p = predictionsRepository.saveAll(predictionEntities).map { it.toDto() }
+
+        entityManager.clear()
+
+        return p
     }
 
     private fun matchYetToPlay(id: Long) : Boolean {
