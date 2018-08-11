@@ -63,10 +63,10 @@ class LiveMatchService {
     }
 
     private fun doesMatchFactsNeedUpdating(matchFacts: MatchFacts?) =
-            matchFacts == null || matchFacts.lastUpdated!!.isInNeedOfUpdate()
+            (matchFacts == null || matchFacts.lastUpdated!!.isInNeedOfUpdate()) && matchFacts?.status != "FT"
 
     private fun doesCommentaryNeedUpdating(matchFacts: MatchFacts?) =
-            matchFacts?.commentary?.lastUpdated == null || matchFacts.commentary!!.lastUpdated!!.isInNeedOfUpdate()
+            (matchFacts?.commentary?.lastUpdated == null || matchFacts.commentary!!.lastUpdated!!.isInNeedOfUpdate()) && matchFacts?.status != "FT"
 
     private fun getRelevantMatchFacts(storedMatch: MatchFacts?, updatedMatch: MatchFacts?, updatedCommentary: Commentary?): MatchFacts? {
         val matchFacts = updatedMatch ?: storedMatch ?: return null
