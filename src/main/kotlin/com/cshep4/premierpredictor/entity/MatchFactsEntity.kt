@@ -80,7 +80,7 @@ data class MatchFactsEntity(
             week = this.week,
             visitorTeamName = this.visitorTeamName,
             penaltyLocal = this.penaltyLocal,
-            localTeamScore = this.localTeamScore,
+            localTeamScore = makeHomeScoreNumeric(),
             ftScore = this.ftScore,
             etScore = this.etScore,
             compId = this.compId,
@@ -93,13 +93,29 @@ data class MatchFactsEntity(
             localTeamName = this.localTeamName,
             id = this.id,
             time = this.time,
-            visitorTeamScore = this.visitorTeamScore,
+            visitorTeamScore = makeAwayScoreNumeric(),
             formattedDate = this.formattedDate,
             venueId = this.venueId,
             events = this.events,
             status = correctStatus(),
             commentary = this.commentary,
             lastUpdated = this.lastUpdated)
+
+    private fun makeHomeScoreNumeric(): String? {
+        if (localTeamScore == "?") {
+            return ""
+        }
+
+        return localTeamScore
+    }
+
+    private fun makeAwayScoreNumeric(): String? {
+        if (visitorTeamScore == "?") {
+            return ""
+        }
+
+        return visitorTeamScore
+    }
 
     private fun correctStatus(): String? {
         if (status == null || ":" in status!!) {
