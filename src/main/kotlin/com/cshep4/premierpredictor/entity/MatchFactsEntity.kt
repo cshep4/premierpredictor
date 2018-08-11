@@ -80,7 +80,7 @@ data class MatchFactsEntity(
             week = this.week,
             visitorTeamName = this.visitorTeamName,
             penaltyLocal = this.penaltyLocal,
-            localTeamScore = makeHomeScoreNumeric(),
+            localTeamScore = getNumericScore(this.localTeamScore),
             ftScore = this.ftScore,
             etScore = this.etScore,
             compId = this.compId,
@@ -93,29 +93,13 @@ data class MatchFactsEntity(
             localTeamName = this.localTeamName,
             id = this.id,
             time = this.time,
-            visitorTeamScore = makeAwayScoreNumeric(),
+            visitorTeamScore = getNumericScore(this.visitorTeamScore),
             formattedDate = this.formattedDate,
             venueId = this.venueId,
             events = this.events,
             status = correctStatus(),
             commentary = this.commentary,
             lastUpdated = this.lastUpdated)
-
-    private fun makeHomeScoreNumeric(): String? {
-        if (localTeamScore == "?") {
-            return ""
-        }
-
-        return localTeamScore
-    }
-
-    private fun makeAwayScoreNumeric(): String? {
-        if (visitorTeamScore == "?") {
-            return ""
-        }
-
-        return visitorTeamScore
-    }
 
     private fun correctStatus(): String? {
         if (status == null || ":" in status!!) {
@@ -148,7 +132,7 @@ data class MatchFactsEntity(
                 week = dto.week,
                 visitorTeamName = dto.visitorTeamName,
                 penaltyLocal = dto.penaltyLocal,
-                localTeamScore = dto.localTeamScore,
+                localTeamScore = getNumericScore(dto.localTeamScore),
                 ftScore = dto.ftScore,
                 etScore = dto.etScore,
                 compId = dto.compId,
@@ -161,12 +145,20 @@ data class MatchFactsEntity(
                 localTeamName = dto.localTeamName,
                 id = dto.id,
                 time = dto.time,
-                visitorTeamScore = dto.visitorTeamScore,
+                visitorTeamScore = getNumericScore(dto.visitorTeamScore),
                 formattedDate = dto.formattedDate,
                 venueId = dto.venueId,
                 events = dto.events,
                 status = dto.status,
                 commentary = dto.commentary,
                 lastUpdated = dto.lastUpdated)
+
+        private fun getNumericScore(score: String?): String? {
+            if (score == null || score == "?") {
+                return ""
+            }
+
+            return score
+        }
     }
 }
