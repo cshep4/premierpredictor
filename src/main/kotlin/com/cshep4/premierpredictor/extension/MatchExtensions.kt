@@ -7,4 +7,4 @@ fun List<PredictedMatch>.getMatchById(id: Long?): PredictedMatch =
         first { it.id == id }
 
 fun MatchFacts?.isPlaying(): Boolean =
-        this?.status != null && status != "" && status != "FT" && status != "Postp." && status != "Cancl." && status != "Awarded" && status != "Aban."
+        this?.status != null && status != "" && status != "FT" && status != "Postp." && status != "Cancl." && status != "Awarded" && status != "Aban." && ":" !in status!!

@@ -97,9 +97,17 @@ data class MatchFactsEntity(
             formattedDate = this.formattedDate,
             venueId = this.venueId,
             events = this.events,
-            status = this.status,
+            status = correctStatus(),
             commentary = this.commentary,
             lastUpdated = this.lastUpdated)
+
+    private fun correctStatus(): String? {
+        if (status == null || ":" in status!!) {
+            return null
+        }
+
+        return status
+    }
 
     @DynamoDBIgnore
     fun getDateTime(): LocalDateTime? {
