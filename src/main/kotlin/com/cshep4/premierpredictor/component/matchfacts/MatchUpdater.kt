@@ -6,6 +6,7 @@ import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchFactsEntity
 import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
+import kotlinx.coroutines.experimental.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -31,9 +32,9 @@ class MatchUpdater {
 
         val updatedMatchEntities = updated.map { MatchFactsEntity.fromDto(it) }
 
-//        launch {
+        launch {
             matchFactsRepository.saveAll(updatedMatchEntities)
-//        }
+        }
 
         return listOf(notUpdated, updated).flatten()
     }
@@ -51,9 +52,9 @@ class MatchUpdater {
         val apiResult = retrieveMatchFromApi(id) ?: return match
         apiResult.commentary = match?.commentary
 
-//        launch {
+        launch {
             matchFactsRepository.save(MatchFactsEntity.fromDto(apiResult))
-//        }
+        }
 
         return apiResult
     }

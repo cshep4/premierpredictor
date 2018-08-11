@@ -10,6 +10,9 @@ import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.service.prediction.MatchPredictionSummaryService
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -31,7 +34,7 @@ class LiveMatchService {
     private lateinit var predictionsService: PredictionsService
 
     fun retrieveLiveMatchFacts(id: String): MatchFacts? {
-//        return runBlocking {
+        return runBlocking {
             val storedMatch = matchFactsRepository
                     .findById(id)
                     .map { it.toDto() }
@@ -41,25 +44,25 @@ class LiveMatchService {
             var updatedCommentary: Commentary? = null
 
 
-//            val matchFactsCoRoutine = async {
+            val matchFactsCoRoutine = async {
                 if (doesMatchFactsNeedUpdating(storedMatch)) {
                     updatedMatch = matchUpdater.retrieveMatchFromApi(id)
                 }
-//            }
+            }
 
-//            val commentaryCoRoutine = async {
+            val commentaryCoRoutine = async {
                 if (doesCommentaryNeedUpdating(storedMatch)) {
                     updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
                 }
-//            }
+            }
 
 
-//            matchFactsCoRoutine.await()
-//            commentaryCoRoutine.await()
+            matchFactsCoRoutine.await()
+            commentaryCoRoutine.await()
 
 
-            return getRelevantMatchFacts(storedMatch, updatedMatch, updatedCommentary)
-//        }
+            getRelevantMatchFacts(storedMatch, updatedMatch, updatedCommentary)
+        }
     }
 
     private fun doesMatchFactsNeedUpdating(matchFacts: MatchFacts?) =
@@ -76,9 +79,9 @@ class LiveMatchService {
             else -> updatedCommentary
         }
 
-//        launch {
+        launch {
             matchFactsRepository.save(MatchFactsEntity.fromDto(matchFacts))
-//        }
+        }
 
         return matchFacts
     }
