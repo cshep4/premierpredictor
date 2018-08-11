@@ -96,8 +96,8 @@ data class MatchFacts(
 ) {
 	fun toMatch(): Match = Match(
 			id = this.id!!.toLong(),
-			hTeam = this.localTeamName!!,
-			aTeam = this.visitorTeamName!!,
+			hTeam = getFullTeamName(this.localTeamName!!),
+			aTeam = getFullTeamName(this.visitorTeamName!!),
 			hGoals = this.localTeamScore?.toIntOrNull(),
 			aGoals = this.visitorTeamScore?.toIntOrNull(),
 			played = getPlayed(),
@@ -126,6 +126,21 @@ data class MatchFacts(
 			1
 		} else {
 			0
+		}
+	}
+
+	private fun getFullTeamName(name: String): String {
+		return when (name) {
+			"Bournemouth" -> "AFC Bournemouth"
+			"Brighton" -> "Brighton & Hove Albion"
+			"Cardiff" -> "Cardiff City"
+			"Huddersfield" -> "Huddersfield Town"
+			"Leicester" -> "Leicester City"
+			"Newcastle" -> "Newcastle United"
+			"Tottenham" -> "Tottenham Hotspur"
+			"West Ham" -> "West Ham United"
+			"Wolves" -> "Wolverhampton Wanderers"
+			else -> name
 		}
 	}
 }
