@@ -32,9 +32,9 @@ class MatchUpdater {
 
         val updatedMatchEntities = updated.map { MatchFactsEntity.fromDto(it) }
 
-        launch {
-            matchFactsRepository.saveAll(updatedMatchEntities)
-        }
+//        launch {
+        matchFactsRepository.saveAll(updatedMatchEntities)
+//        }
 
         return listOf(notUpdated, updated).flatten()
     }
@@ -62,6 +62,15 @@ class MatchUpdater {
     fun retrieveMatchFromApi(id: String): MatchFacts? {
         val apiResult = fixtureApiRequester.retrieveMatch(id) ?: return null
         apiResult.lastUpdated = time.localDateTimeNow()
+
+        // TODO - do this in a better way
+        if (apiResult.localTeamScore == "?") {
+            apiResult.localTeamScore = ""
+        }
+
+        if (apiResult.visitorTeamScore == "?") {
+            apiResult.visitorTeamScore = ""
+        }
 
         return apiResult
     }

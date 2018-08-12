@@ -3,6 +3,7 @@ package com.cshep4.premierpredictor.service.fixtures
 import com.cshep4.premierpredictor.component.fixtures.FixturesByDate
 import com.cshep4.premierpredictor.component.fixtures.PredictionMerger
 import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
+import com.cshep4.premierpredictor.constant.MatchConstants.UPCOMING_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
@@ -15,6 +16,7 @@ import com.cshep4.premierpredictor.repository.sql.FixturesRepository
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
 import kotlinx.coroutines.experimental.launch
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -37,6 +39,9 @@ class FixturesService {
 
     @Autowired
     private lateinit var matchUpdater: MatchUpdater
+
+    @Autowired
+    private lateinit var template: SimpMessagingTemplate
 
     fun retrieveAllMatches() : List<Match> = fixturesRepository.findAll().map { it.toDto() }
 
@@ -67,8 +72,9 @@ class FixturesService {
 
         launch {
             if (upcomingMatches.any { it.lastUpdated!!.isInNeedOfUpdate() }) {
-                matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
-//            return fixturesByDate.format(updatedMatches)
+                val updatedMatches = matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
+
+                template.convertAndSend(UPCOMING_SUBSCRIPTION, fixturesByDate.format(updatedMatches))
             }
         }
 

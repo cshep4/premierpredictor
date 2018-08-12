@@ -2,6 +2,7 @@ package com.cshep4.premierpredictor.service.livematch
 
 import com.cshep4.premierpredictor.component.matchfacts.CommentaryUpdater
 import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
+import com.cshep4.premierpredictor.constant.MatchConstants.LIVE_MATCH_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.MatchSummary
 import com.cshep4.premierpredictor.data.api.live.commentary.Commentary
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
@@ -14,6 +15,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 
 @Service
@@ -33,36 +35,44 @@ class LiveMatchService {
     @Autowired
     private lateinit var predictionsService: PredictionsService
 
-    fun retrieveLiveMatchFacts(id: String): MatchFacts? {
-        return runBlocking {
-            val storedMatch = matchFactsRepository
-                    .findById(id)
-                    .map { it.toDto() }
-                    .orElse(null)
+    @Autowired
+    private lateinit var template: SimpMessagingTemplate
 
+    fun retrieveLiveMatchFacts(id: String): MatchFacts? {
+//        return runBlocking {
+        val storedMatch = matchFactsRepository
+                .findById(id)
+                .map { it.toDto() }
+                .orElse(null)
+
+        launch {
             var updatedMatch: MatchFacts? = null
             var updatedCommentary: Commentary? = null
 
-
-            val matchFactsCoRoutine = async {
-                if (doesMatchFactsNeedUpdating(storedMatch)) {
-                    updatedMatch = matchUpdater.retrieveMatchFromApi(id)
+            runBlocking {
+                val matchFactsCoRoutine = async {
+                    if (doesMatchFactsNeedUpdating(storedMatch)) {
+                        updatedMatch = matchUpdater.retrieveMatchFromApi(id)
+                    }
                 }
-            }
 
-            val commentaryCoRoutine = async {
-                if (doesCommentaryNeedUpdating(storedMatch)) {
-                    updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
+                val commentaryCoRoutine = async {
+                    if (doesCommentaryNeedUpdating(storedMatch)) {
+                        updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
+                    }
                 }
+
+
+                matchFactsCoRoutine.await()
+                commentaryCoRoutine.await()
+
+                val match = getRelevantMatchFacts(storedMatch, updatedMatch, updatedCommentary) ?: return@runBlocking
+                template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + match.id, match)
             }
-
-
-            matchFactsCoRoutine.await()
-            commentaryCoRoutine.await()
-
-
-            getRelevantMatchFacts(storedMatch, updatedMatch, updatedCommentary)
         }
+
+        return storedMatch
+//        }
     }
 
     private fun doesMatchFactsNeedUpdating(matchFacts: MatchFacts?) =
@@ -79,9 +89,9 @@ class LiveMatchService {
             else -> updatedCommentary
         }
 
-        launch {
+//        launch {
             matchFactsRepository.save(MatchFactsEntity.fromDto(matchFacts))
-        }
+//        }
 
         return matchFacts
     }

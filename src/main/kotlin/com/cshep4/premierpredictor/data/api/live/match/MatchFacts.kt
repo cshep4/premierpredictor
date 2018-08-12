@@ -55,7 +55,7 @@ data class MatchFacts(
 		val localTeamName: String? = null,
 
 		@JsonProperty("localteam_score")
-		val localTeamScore: String? = null,
+		var localTeamScore: String? = null,
 
 		@JsonProperty("visitorteam_id")
 		val visitorTeamId: String? = null,
@@ -64,7 +64,7 @@ data class MatchFacts(
 		val visitorTeamName: String? = null,
 
 		@JsonProperty("visitorteam_score")
-		val visitorTeamScore: String? = null,
+		var visitorTeamScore: String? = null,
 
 		@JsonProperty("ht_score")
 		val htScore: String? = null,
