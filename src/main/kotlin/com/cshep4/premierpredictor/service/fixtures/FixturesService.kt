@@ -74,7 +74,7 @@ class FixturesService {
             if (upcomingMatches.any { it.lastUpdated!!.isInNeedOfUpdate() }) {
                 val updatedMatches = matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
 
-                template.convertAndSend(UPCOMING_SUBSCRIPTION, fixturesByDate.format(updatedMatches))
+                template.convertAndSend(UPCOMING_SUBSCRIPTION, updatedMatches)
             }
         }
 
