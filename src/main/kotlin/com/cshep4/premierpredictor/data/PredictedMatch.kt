@@ -9,6 +9,8 @@ data class PredictedMatch (
         var aTeam: String = "",
         var hGoals: Int? = null,
         var aGoals: Int? = null,
+        var hResult: Int? = null,
+        var aResult: Int? = null,
         var played: Int = 0,
         var dateTime: LocalDateTime? = null,
         var matchday: Int = 0

@@ -147,19 +147,16 @@ internal class FixturesServiceTest {
         matches.forEach { it.setDateTime(LocalDateTime.now()) }
 
         val upcomingMatches = matches.map { it.toDto() }
-        val updatedMatches = listOf(MatchFacts())
         val expectedResult = mapOf(Pair(LocalDate.now(), listOf(MatchFacts())))
 
-
         whenever(matchFactsRepository.findAll()).thenReturn(matches)
-        whenever(matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)).thenReturn(updatedMatches)
-        whenever(fixturesByDate.format(updatedMatches)).thenReturn(expectedResult)
+        whenever(fixturesByDate.format(upcomingMatches)).thenReturn(expectedResult)
 
         val result = fixturesService.retrieveAllUpcomingFixtures()
 
         assertThat(result, Is(expectedResult))
         verify(matchUpdater).updateUpcomingMatchesWithLatestScores(upcomingMatches)
-        verify(fixturesByDate).format(updatedMatches)
+        verify(fixturesByDate).format(upcomingMatches)
     }
 
     @Test

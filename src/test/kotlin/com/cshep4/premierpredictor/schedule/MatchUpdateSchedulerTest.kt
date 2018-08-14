@@ -12,6 +12,7 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
@@ -106,6 +107,7 @@ internal class MatchUpdateSchedulerTest {
     }
 
     @Test
+    @Ignore(value = "This is handled elsewhere at the moment")
     fun `'updateLiveScores' will send each match to the corresponding subscription`() {
         matchUpdateScheduler.addLiveMatch(listOf("1", "2", "3", "4", "5", "6"))
         val matches = listOf(

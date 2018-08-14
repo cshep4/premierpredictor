@@ -17,7 +17,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.any
 import org.mockito.junit.MockitoJUnitRunner
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -128,16 +127,19 @@ internal class UserServiceTest {
     fun `'createUser' adds user to db`() {
         val user = SignUpUser(firstName = "first", surname = "name", email = email, password = "Pass123", confirmPassword = "Pass123", predictedWinner = "France")
 
-        `when`(userRepository.save(any(UserEntity::class.java))).thenReturn(UserEntity.fromDto(user))
+        whenever(userRepository.save(any(UserEntity::class.java))).thenReturn(UserEntity.fromDto(user))
         whenever(userRepository.findByEmail(email)).thenReturn(Optional.empty())
         whenever(bCryptPasswordEncoder.encode(user.password)).thenReturn(user.password)
 
         val result = userService.createUser(user)
 
-        val expectedResult = User(firstName = "first", surname = "name", email = email, password = "Pass123", predictedWinner = "France")
-
-        assertThat(result, Is(expectedResult))
-        verify(userRepository).save(UserEntity.fromDto(user))
+        assertThat(result!!.firstName, Is("first"))
+        assertThat(result.surname, Is("name"))
+        assertThat(result.email, Is(email))
+        assertThat(result.password, Is("Pass123"))
+        assertThat(result.predictedWinner, Is("France"))
+        assertThat(result.joined, Is(notNullValue()))
+        verify(userRepository).save(any(UserEntity::class.java))
     }
 
     @Test

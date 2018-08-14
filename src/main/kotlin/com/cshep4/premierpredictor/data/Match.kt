@@ -16,8 +16,8 @@ data class Match (
             id = this.id,
             hTeam = this.hTeam,
             aTeam = this.aTeam,
-            hGoals = this.hGoals,
-            aGoals = this.aGoals,
+            hResult = this.hGoals,
+            aResult = this.aGoals,
             played = this.played,
             dateTime = this.dateTime,
             matchday = this.matchday)

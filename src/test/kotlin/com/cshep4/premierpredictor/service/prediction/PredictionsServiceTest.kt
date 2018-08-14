@@ -17,6 +17,7 @@ import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import java.time.LocalDateTime
+import javax.persistence.EntityManager
 
 @RunWith(MockitoJUnitRunner::class)
 internal class PredictionsServiceTest {
@@ -28,6 +29,9 @@ internal class PredictionsServiceTest {
 
     @Mock
     private lateinit var createPredictionSummary: CreatePredictionSummary
+
+    @Mock
+    private lateinit var entityManager: EntityManager
 
     @InjectMocks
     private lateinit var predictionsService: PredictionsService
