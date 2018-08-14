@@ -30,7 +30,7 @@ internal class CreatePredictionSummaryTest {
 
         val result = createPredictionSummary.format(matches, predictions)
 
-        assertThat(result.matches, `is`(matches))
+        assertThat(result.matches, `is`(predictedMatches))
     }
 
 }

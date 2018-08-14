@@ -13,7 +13,7 @@ class CreatePredictionSummary {
     private lateinit var predictionMerger: PredictionMerger
 
     fun format(matches: List<Match>, predictions: List<Prediction>) : PredictionSummary {
-        val matchesWithPredictions = predictionMerger.merge(matches, predictions).map { it.toMatch() }
+        val matchesWithPredictions = predictionMerger.merge(matches, predictions)
 
         return PredictionSummary(matches = matchesWithPredictions)
     }
