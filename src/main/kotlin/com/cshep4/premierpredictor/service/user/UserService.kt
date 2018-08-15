@@ -1,7 +1,6 @@
 package com.cshep4.premierpredictor.service.user
 
 
-import com.cshep4.premierpredictor.data.LoginUser
 import com.cshep4.premierpredictor.data.SignUpUser
 import com.cshep4.premierpredictor.data.User
 import com.cshep4.premierpredictor.data.UserPasswords
@@ -33,7 +32,7 @@ class UserService : UserDetailsService {
                 .map { it.toDto() }
                 .orElse(null) ?: throw UsernameNotFoundException("User not found")
 
-        return LoginUser(user.id!!, user.email!!, user.password!!)
+        return user.toLoginUser()
     }
 
     fun createUser(signUpUser: SignUpUser): User? {

@@ -1,6 +1,5 @@
 package com.cshep4.premierpredictor.component.prediction
 
-import com.cshep4.premierpredictor.component.fixtures.PredictionMerger
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.PredictionSummary

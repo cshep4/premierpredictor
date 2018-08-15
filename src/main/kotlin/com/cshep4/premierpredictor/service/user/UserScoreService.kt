@@ -1,8 +1,10 @@
 package com.cshep4.premierpredictor.service.user
 
+import com.cshep4.premierpredictor.component.prediction.PredictionCleaner
 import com.cshep4.premierpredictor.component.score.LeagueTableScoreCalculator
 import com.cshep4.premierpredictor.component.score.MatchScoreCalculator
 import com.cshep4.premierpredictor.component.score.WinnerScoreCalculator
+import com.cshep4.premierpredictor.data.User
 import com.cshep4.premierpredictor.entity.UserEntity
 import com.cshep4.premierpredictor.repository.sql.PredictedMatchRepository
 import com.cshep4.premierpredictor.repository.sql.UserRepository
@@ -29,10 +31,15 @@ class UserScoreService {
     @Autowired
     private lateinit var winnerScoreCalculator: WinnerScoreCalculator
 
+    @Autowired
+    private lateinit var predictionCleaner: PredictionCleaner
+
     @PersistenceContext
     private lateinit var entityManager: EntityManager
 
-    fun updateScores() {
+    fun updateScores(): List<User> {
+        predictionCleaner.deduplicate()
+
         var users = userRepository.findAll().map { it.toDto() }
         users.forEach { it.score = 0 }
 
@@ -46,8 +53,10 @@ class UserScoreService {
             users = winnerScoreCalculator.calculate(users)
         }
 
-        userRepository.saveAll(users.map { UserEntity.fromDto(it) })
+        val userEntities = userRepository.saveAll(users.map { UserEntity.fromDto(it) })
 
         entityManager.clear()
+
+        return userEntities.map { it.toDto() }
     }
 }

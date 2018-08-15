@@ -1,5 +1,6 @@
 package com.cshep4.premierpredictor.data
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.time.LocalDateTime
 
 data class User (val id: Long? = 0,
@@ -12,4 +13,11 @@ data class User (val id: Long? = 0,
                  val joined: LocalDateTime? = null,
                  var admin: Boolean = false,
                  var adFree: Boolean = false
-)
+){
+    fun toLoginUser(): LoginUser {
+        return when {
+            this.admin -> LoginUser(id = this.id!!, username = this.email!!, password = this.password!!, authorities = listOf(SimpleGrantedAuthority("ADMIN")))
+            else -> LoginUser(id = this.id!!, username = this.email!!, password = this.password!!, authorities = emptyList())
+        }
+    }
+}

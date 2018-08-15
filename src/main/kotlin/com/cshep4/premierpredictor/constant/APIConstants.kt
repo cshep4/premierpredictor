@@ -8,7 +8,6 @@ object APIConstants {
     const val TO_DATE: String = "2019-05-20"
     const val COMP_ID: String = "1204"
 
-    const val HEADER_KEY = "X-Auth-Token"
     const val USER_ID = "userId"
 
     var SEND_GRID_API_KEY: String = System.getenv("SEND_GRIP_API_KEY")

@@ -8,16 +8,14 @@ import com.cshep4.premierpredictor.extension.generateJwtToken
 import io.jsonwebtoken.Jwts
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import java.io.IOException
-import java.util.*
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-
 
 class JWTAuthorisationFilter(authManager: AuthenticationManager) : BasicAuthenticationFilter(authManager) {
     @Throws(IOException::class, ServletException::class)
@@ -33,7 +31,7 @@ class JWTAuthorisationFilter(authManager: AuthenticationManager) : BasicAuthenti
 
         if (authentication != null) {
             if (req.requestURI != LOGOUT_URL) {
-                res.generateJwtToken(authentication.principal.toString(), req.requestURI)
+                res.generateJwtToken(authentication.principal.toString(), req.requestURI, authentication.authorities)
             }
         }
 
@@ -44,14 +42,16 @@ class JWTAuthorisationFilter(authManager: AuthenticationManager) : BasicAuthenti
     private fun getAuthentication(request: HttpServletRequest): UsernamePasswordAuthenticationToken? {
         val token = request.getHeader(HEADER_STRING) ?: return null
 
-        val user = Jwts.parser()
+        val jwt = Jwts.parser()
                 .setSigningKey(SECRET.toByteArray())
                 .parseClaimsJws(token.replace(TOKEN_PREFIX, ""))
                 .body
-                .issuer
+
+        val user = jwt.issuer
+        val authorities = jwt["ROLE"] as String? ?: "USER"
 
         return when {
-            user != null -> UsernamePasswordAuthenticationToken(user, null, ArrayList<GrantedAuthority>())
+            user != null -> UsernamePasswordAuthenticationToken(user, null, listOf(SimpleGrantedAuthority(authorities)))
             else -> null
         }
     }

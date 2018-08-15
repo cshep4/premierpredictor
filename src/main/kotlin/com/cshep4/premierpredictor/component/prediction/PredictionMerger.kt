@@ -1,4 +1,4 @@
-package com.cshep4.premierpredictor.component.fixtures
+package com.cshep4.premierpredictor.component.prediction
 
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch

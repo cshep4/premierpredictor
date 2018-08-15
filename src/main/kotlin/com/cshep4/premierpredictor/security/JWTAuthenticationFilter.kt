@@ -18,9 +18,6 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-
-
-
 class JWTAuthenticationFilter(private val authManager: AuthenticationManager) : UsernamePasswordAuthenticationFilter() {
     @Throws(AuthenticationException::class, IOException::class)
     override fun attemptAuthentication(req: HttpServletRequest, res: HttpServletResponse): Authentication {
@@ -38,6 +35,6 @@ class JWTAuthenticationFilter(private val authManager: AuthenticationManager) : 
 
     @Throws(IOException::class, ServletException::class)
     override fun successfulAuthentication(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain, auth: Authentication) {
-        res.generateJwtToken((auth.principal as User).username, req.requestURI)
+        res.generateJwtToken((auth.principal as User).username, req.requestURI, (auth.principal as User).authorities)
     }
 }

@@ -17,7 +17,6 @@ import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.CorsConfigurationSource
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
-
 @EnableWebSecurity
 class WebSecurity : WebSecurityConfigurerAdapter() {
     @Autowired
@@ -37,6 +36,8 @@ class WebSecurity : WebSecurityConfigurerAdapter() {
                 .antMatchers(POST, "/users/resetPassword").permitAll()
                 .antMatchers(GET, "console/").permitAll()
                 .antMatchers(GET, "/socket/**").permitAll()
+                .antMatchers(DELETE, "/predictions/deduplicate").permitAll()
+                .antMatchers("/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(JWTAuthenticationFilter(authenticationManager()))

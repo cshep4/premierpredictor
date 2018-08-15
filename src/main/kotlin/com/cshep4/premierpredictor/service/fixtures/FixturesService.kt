@@ -1,8 +1,8 @@
 package com.cshep4.premierpredictor.service.fixtures
 
 import com.cshep4.premierpredictor.component.fixtures.FixturesByDate
-import com.cshep4.premierpredictor.component.fixtures.PredictionMerger
 import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
+import com.cshep4.premierpredictor.component.prediction.PredictionMerger
 import com.cshep4.premierpredictor.constant.MatchConstants.UPCOMING_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch

@@ -113,9 +113,46 @@ object Queries {
             " WHERE email = ?2" +
             " AND signature = ?3"
 
-    const val QUERY_GET_PREDICTION_SUMMARY = "select count(case when hgoals > agoals then 1 else null end) as homeWin,\n" +
-            "  count(case when hgoals = agoals then 1 else null end) as draw,\n" +
-            "  count(case when hgoals < agoals then 1 else null end) as awayWin\n" +
-            " from prediction\n" +
+    const val QUERY_GET_PREDICTION_SUMMARY = "select count(case when hgoals > agoals then 1 else null end) as homeWin," +
+            "  count(case when hgoals = agoals then 1 else null end) as draw," +
+            "  count(case when hgoals < agoals then 1 else null end) as awayWin" +
+            " from prediction" +
             " WHERE matchid = ?1"
+
+    const val QUERY_REMOVE_DUPLICATE_PREDICTIONS = "DELETE FROM prediction T1" +
+            " USING prediction T2" +
+            " WHERE T1.id < T2.id" +
+            " AND T1.matchid = T2.matchid" +
+            " AND T1.userid = T2.userid"
+
+    const val QUERY_FIND_DUPLICATE_PREDICTIONS_FAST = "select *" +
+            "  from prediction a" +
+            "  join ( select matchid as matchid2, userid as userid2, agoals as agoals2, hgoals as hgoals2" +
+            "           from prediction" +
+            "          group by matchid2, userid2, agoals2, hgoals2" +
+            "         having count(*) > 1 ) b" +
+            "    on a.matchid = b.matchid2" +
+            "   and a.userid = b.userid2" +
+            " ORDER BY a.userid, a.matchid"
+
+    const val QUERY_FIND_DUPLICATE_PREDICTIONS_THOROUGH = "SELECT *" +
+            " FROM prediction p" +
+            " WHERE (" +
+            "  SELECT COUNT(*)" +
+            "   FROM prediction p2" +
+            "   WHERE p.userid=p2.userid" +
+            "   AND p.matchid=p2.matchid" +
+            " ) > 1"
+
+    const val QUERY_FIND_DUPLICATE_PREDICTIONS_WITH_DIFFERENT_SCORES = "select *" +
+            "  from prediction a" +
+            "  join ( select matchid as matchid2, userid as userid2, agoals as agoals2, hgoals as hgoals2" +
+            "           from prediction" +
+            "          group by matchid2, userid2, agoals2, hgoals2" +
+            "         having count(*) > 1 ) b" +
+            "    on a.matchid = b.matchid2" +
+            "   and a.userid = b.userid2" +
+            "    AND (a.hgoals != b.hgoals2 " +
+            "    OR a.agoals != b.agoals2)" +
+            " ORDER BY a.userid, a.matchid"
 }

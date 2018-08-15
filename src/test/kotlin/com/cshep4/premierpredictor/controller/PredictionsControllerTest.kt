@@ -1,8 +1,12 @@
 package com.cshep4.premierpredictor.controller
 
+import com.cshep4.premierpredictor.data.DuplicateSummary
 import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.PredictionSummary
+import com.cshep4.premierpredictor.enum.DuplicateSearch
+import com.cshep4.premierpredictor.service.prediction.PredictionCleanerService
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -18,6 +22,9 @@ import org.springframework.http.HttpStatus.*
 internal class PredictionsControllerTest {
     @Mock
     private lateinit var predictionsService: PredictionsService
+
+    @Mock
+    private lateinit var predictionCleanerService: PredictionCleanerService
 
     @InjectMocks
     private lateinit var predictionsController: PredictionsController
@@ -76,5 +83,25 @@ internal class PredictionsControllerTest {
 
         assertThat(result.statusCode, `is`(OK))
         assertThat(result.body, `is`(predictions))
+    }
+
+    @Test
+    fun `'removeDuplicatesIfAnyExist' returns Duplicate summary`() {
+        val duplicates = DuplicateSummary()
+
+        whenever(predictionCleanerService.removeDuplicatesIfAnyExist(DuplicateSearch.THOROUGH)).thenReturn(duplicates)
+
+        val result = predictionsController.removeDuplicatesIfAnyExist(DuplicateSearch.THOROUGH)
+
+        verify(predictionCleanerService).removeDuplicatesIfAnyExist(DuplicateSearch.THOROUGH)
+        assertThat(result.statusCode, `is`(OK))
+        assertThat(result.body, `is`(duplicates))
+    }
+
+    @Test
+    fun `'removeDuplicatesIfAnyExist' will do a quick duplicate search if mode is not specified`() {
+        predictionsController.removeDuplicatesIfAnyExist()
+
+        verify(predictionCleanerService).removeDuplicatesIfAnyExist(DuplicateSearch.QUICK)
     }
 }
