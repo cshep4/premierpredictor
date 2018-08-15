@@ -31,6 +31,7 @@ class WebSecurity : WebSecurityConfigurerAdapter() {
                 .antMatchers(POST, SIGN_UP_URL).permitAll()
                 .antMatchers(PUT, FIXTURES_UPDATE_URL).permitAll()
                 .antMatchers(PUT, SET_USED_TOKEN_URL).permitAll()
+                .antMatchers(PUT, "/score/update").permitAll()
                 .antMatchers(GET, "/reset-password").permitAll()
                 .antMatchers(POST, "/users/sendResetPassword").permitAll()
                 .antMatchers(POST, "/users/resetPassword").permitAll()
