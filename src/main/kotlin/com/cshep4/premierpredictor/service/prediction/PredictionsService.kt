@@ -1,12 +1,13 @@
 package com.cshep4.premierpredictor.service.prediction
 
 import com.cshep4.premierpredictor.component.prediction.CreatePredictionSummary
-import com.cshep4.premierpredictor.data.Match
-import com.cshep4.premierpredictor.data.Prediction
-import com.cshep4.premierpredictor.data.PredictionSummary
+import com.cshep4.premierpredictor.data.*
 import com.cshep4.premierpredictor.entity.PredictionEntity
 import com.cshep4.premierpredictor.repository.sql.PredictionsRepository
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
+import com.cshep4.premierpredictor.service.team.TeamService
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Clock
@@ -24,6 +25,9 @@ class PredictionsService {
 
     @Autowired
     private lateinit var createPredictionSummary: CreatePredictionSummary
+
+    @Autowired
+    private lateinit var teamService: TeamService
 
     @PersistenceContext
     private lateinit var entityManager: EntityManager
@@ -61,5 +65,25 @@ class PredictionsService {
         val predictions = retrievePredictionsByUserId(id)
 
         return createPredictionSummary.format(matches, predictions)
+    }
+
+    fun retrievePredictorData(id: Long): PredictorData {
+        return runBlocking {
+            var predictions: List<PredictedMatch> = emptyList()
+            var forms: Map<String, TeamForm> = emptyMap()
+
+            val predictionsCoRoutine = async {
+                predictions = fixturesService.retrieveAllMatchesWithPredictions(id)
+            }
+
+            val formCoRoutine = async {
+                forms = teamService.retrieveRecentForms()
+            }
+
+            predictionsCoRoutine.await()
+            formCoRoutine.await()
+
+            PredictorData(predictions = predictions, forms = forms)
+        }
     }
 }

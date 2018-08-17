@@ -39,7 +39,6 @@ class LiveMatchService {
     private lateinit var template: SimpMessagingTemplate
 
     fun retrieveLiveMatchFacts(id: String): MatchFacts? {
-//        return runBlocking {
         val storedMatch = matchFactsRepository
                 .findById(id)
                 .map { it.toDto() }
@@ -72,7 +71,6 @@ class LiveMatchService {
         }
 
         return storedMatch
-//        }
     }
 
     private fun doesMatchFactsNeedUpdating(matchFacts: MatchFacts?) =
@@ -89,9 +87,7 @@ class LiveMatchService {
             else -> updatedCommentary
         }
 
-//        launch {
-            matchFactsRepository.save(MatchFactsEntity.fromDto(matchFacts))
-//        }
+        matchFactsRepository.save(MatchFactsEntity.fromDto(matchFacts))
 
         return matchFacts
     }

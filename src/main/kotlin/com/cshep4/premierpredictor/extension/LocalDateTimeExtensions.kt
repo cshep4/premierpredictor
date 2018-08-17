@@ -11,5 +11,8 @@ fun LocalDateTime.isToday(): Boolean =
 fun LocalDateTime.isUpcoming(): Boolean =
         this.isAfter(LocalDateTime.now(Clock.systemUTC()))
 
+fun LocalDateTime.isInPast(): Boolean =
+        this.isBefore(LocalDateTime.now())
+
 fun LocalDateTime.isInNeedOfUpdate(): Boolean =
         this.isBefore(LocalDateTime.now().minusSeconds(REFRESH_RATE))

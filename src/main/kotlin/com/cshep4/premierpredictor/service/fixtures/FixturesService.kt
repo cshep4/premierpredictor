@@ -8,6 +8,7 @@ import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchEntity
+import com.cshep4.premierpredictor.extension.hasPlayed
 import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.extension.isToday
 import com.cshep4.premierpredictor.extension.isUpcoming
@@ -99,4 +100,6 @@ class FixturesService {
         return fixturesRepository.saveAll(matchEntities)
                 .map { it.toDto() }
     }
+
+    fun retrieveAllPastMatches(): List<Match> = retrieveAllMatches().filter { it.hasPlayed() }
 }

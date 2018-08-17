@@ -1,8 +1,6 @@
 package com.cshep4.premierpredictor.controller
 
-import com.cshep4.premierpredictor.data.DuplicateSummary
-import com.cshep4.premierpredictor.data.Prediction
-import com.cshep4.premierpredictor.data.PredictionSummary
+import com.cshep4.premierpredictor.data.*
 import com.cshep4.premierpredictor.enum.DuplicateSearch
 import com.cshep4.premierpredictor.service.prediction.PredictionCleanerService
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
@@ -103,5 +101,28 @@ internal class PredictionsControllerTest {
         predictionsController.removeDuplicatesIfAnyExist()
 
         verify(predictionCleanerService).removeDuplicatesIfAnyExist(DuplicateSearch.QUICK)
+    }
+
+    @Test
+    fun `'getAllPredictedMatchesWithForm' should return a list of matches with users predictions and status OK if some are found`() {
+        val matches = listOf(PredictedMatch())
+        val data = PredictorData(predictions = matches)
+
+        whenever(predictionsService.retrievePredictorData(1)).thenReturn(data)
+
+        val result = predictionsController.getAllPredictedMatchesWithForm(1)
+
+        assertThat(result.statusCode, `is`(OK))
+        assertThat(result.body, `is`(data))
+    }
+
+    @Test
+    fun `'getAllPredictedMatchesWithForm' should return a NOT FOUND if no matches are found`() {
+        whenever(predictionsService.retrievePredictorData(1)).thenReturn(PredictorData(predictions = emptyList()))
+
+        val result = predictionsController.getAllPredictedMatchesWithForm(1)
+
+        assertThat(result.statusCode, `is`(NOT_FOUND))
+        assertThat(result.body, `is`(nullValue()))
     }
 }

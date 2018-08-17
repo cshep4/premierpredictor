@@ -3,6 +3,7 @@ package com.cshep4.premierpredictor.controller
 import com.cshep4.premierpredictor.data.DuplicateSummary
 import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.PredictionSummary
+import com.cshep4.premierpredictor.data.PredictorData
 import com.cshep4.premierpredictor.enum.DuplicateSearch
 import com.cshep4.premierpredictor.enum.DuplicateSearch.QUICK
 import com.cshep4.premierpredictor.service.prediction.PredictionCleanerService
@@ -52,5 +53,15 @@ class PredictionsController {
         val duplicateSummary = predictionCleanerService.removeDuplicatesIfAnyExist(mode)
 
         return ResponseEntity.ok(duplicateSummary)
+    }
+
+    @GetMapping("/{id}")
+    fun getAllPredictedMatchesWithForm(@PathVariable(value = "id") id: Long) : ResponseEntity<PredictorData> {
+        val data = predictionsService.retrievePredictorData(id)
+
+        return when {
+            data.predictions.isEmpty() -> ResponseEntity.notFound().build()
+            else -> ResponseEntity.ok(data)
+        }
     }
 }

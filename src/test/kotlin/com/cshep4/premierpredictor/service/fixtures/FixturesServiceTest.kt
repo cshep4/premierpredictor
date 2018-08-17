@@ -28,6 +28,7 @@ import java.time.LocalDateTime
 import java.util.*
 import org.hamcrest.CoreMatchers.`is` as Is
 
+
 @RunWith(MockitoJUnitRunner::class)
 internal class FixturesServiceTest {
     @Mock
@@ -155,7 +156,7 @@ internal class FixturesServiceTest {
         val result = fixturesService.retrieveAllUpcomingFixtures()
 
         assertThat(result, Is(expectedResult))
-        verify(matchUpdater).updateUpcomingMatchesWithLatestScores(upcomingMatches)
+//        verify(matchUpdater).updateUpcomingMatchesWithLatestScores(upcomingMatches)
         verify(fixturesByDate).format(upcomingMatches)
     }
 
@@ -259,5 +260,21 @@ internal class FixturesServiceTest {
 
         assertThat(result, Is(matches))
         verify(fixturesRepository).saveAll(matchEntities)
+    }
+
+    @Test
+    fun `'retrieveAllMatches' should retrieve only past matches that have been played`() {
+        val pastMatch = MatchEntity(hGoals = 1, aGoals = 1, dateTime = LocalDateTime.now().minusSeconds(1))
+        val pastMatchNotPlayed = MatchEntity(dateTime = LocalDateTime.now().minusDays(1))
+
+        val matchesFromDb = listOf(pastMatch, pastMatchNotPlayed)
+        whenever(fixturesRepository.findAll()).thenReturn(matchesFromDb)
+
+        val result = fixturesService.retrieveAllPastMatches()
+
+        val expectedResult = listOf(pastMatch).map { it.toDto() }
+
+        assertThat(result.isEmpty(), Is(false))
+        assertThat(result, Is(expectedResult))
     }
 }

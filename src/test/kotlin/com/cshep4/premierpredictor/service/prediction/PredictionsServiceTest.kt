@@ -1,12 +1,12 @@
 package com.cshep4.premierpredictor.service.prediction
 
 import com.cshep4.premierpredictor.component.prediction.CreatePredictionSummary
-import com.cshep4.premierpredictor.data.Match
-import com.cshep4.premierpredictor.data.Prediction
-import com.cshep4.premierpredictor.data.PredictionSummary
+import com.cshep4.premierpredictor.data.*
 import com.cshep4.premierpredictor.entity.PredictionEntity
 import com.cshep4.premierpredictor.repository.sql.PredictionsRepository
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
+import com.cshep4.premierpredictor.service.team.TeamService
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.nullValue
@@ -29,6 +29,9 @@ internal class PredictionsServiceTest {
 
     @Mock
     private lateinit var createPredictionSummary: CreatePredictionSummary
+
+    @Mock
+    private lateinit var teamService: TeamService
 
     @Mock
     private lateinit var entityManager: EntityManager
@@ -142,5 +145,23 @@ internal class PredictionsServiceTest {
         val result = predictionsService.retrievePredictionsSummaryByUserId(1)
 
         assertThat(result, `is`(predictionSummary))
+    }
+
+    @Test
+    fun `'retrievePredictorData' will get user's predictions and team forms and return`() {
+        val predictions = listOf(PredictedMatch())
+        whenever(fixturesService.retrieveAllMatchesWithPredictions(1)).thenReturn(predictions)
+
+        val forms = mapOf(Pair("Team", TeamForm()))
+        whenever(teamService.retrieveRecentForms()).thenReturn(forms)
+
+        val result = predictionsService.retrievePredictorData(1)
+
+        val expectedResult = PredictorData(predictions = predictions, forms = forms)
+
+        assertThat(result, `is`(expectedResult))
+
+        verify(fixturesService).retrieveAllMatchesWithPredictions(1)
+        verify(teamService).retrieveRecentForms()
     }
 }

@@ -1,5 +1,6 @@
 package com.cshep4.premierpredictor.component.fixtures
 
+import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
@@ -10,6 +11,7 @@ internal class FixtureFormatterTest {
     companion object {
         const val TEAM_1 = "Liverpool"
         const val TEAM_2 = "Chelsea"
+        const val TEAM_3 = "Man City"
     }
     private val fixtureFormatter = FixtureFormatter()
 
@@ -47,5 +49,24 @@ internal class FixtureFormatterTest {
         val result = fixtureFormatter.format(emptyList())
 
         assertThat(result.isEmpty(), Is(true))
+    }
+
+    @Test
+    fun `'groupIntoTeams' takes a list of matches and groups them into teams and orders matches by date`(){
+        val m1 = Match(id = 1, hTeam = TEAM_1, aTeam = TEAM_2, dateTime = LocalDateTime.now().minusDays(1))
+        val m2 = Match(id = 2, hTeam = TEAM_1, aTeam = TEAM_3, dateTime = LocalDateTime.now().minusDays(2))
+        val m3 = Match(id = 3, hTeam = TEAM_2, aTeam = TEAM_1, dateTime = LocalDateTime.now().minusDays(3))
+
+        val matches = listOf(m1, m2, m3)
+
+        val result = fixtureFormatter.groupIntoTeams(matches)
+
+        val expectedResult = mapOf(
+                Pair(TEAM_1, listOf(m1, m2, m3)),
+                Pair(TEAM_2, listOf(m1, m3)),
+                Pair(TEAM_3, listOf(m2))
+        )
+
+        assertThat(result, Is(expectedResult))
     }
 }
