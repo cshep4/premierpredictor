@@ -1,8 +1,18 @@
 package com.cshep4.premierpredictor.security
 
-import com.cshep4.premierpredictor.constant.SecurityConstants.FIXTURES_UPDATE_URL
-import com.cshep4.premierpredictor.constant.SecurityConstants.SET_USED_TOKEN_URL
-import com.cshep4.premierpredictor.constant.SecurityConstants.SIGN_UP_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.ADMIN_ROLE
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.ADMIN_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.ALL_PATHS_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.DB_CONSOLE_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.DEDUPLICATE_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.FIXTURES_UPDATE_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.PROCESS_PASSWORD_RESET_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.RESET_PASSWORD_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.SCORE_UPDATE_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.SEND_RESET_PASSWORD_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.SET_USED_TOKEN_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.SIGN_UP_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.SOCKET_URL
 import com.cshep4.premierpredictor.service.user.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -31,14 +41,14 @@ class WebSecurity : WebSecurityConfigurerAdapter() {
                 .antMatchers(POST, SIGN_UP_URL).permitAll()
                 .antMatchers(PUT, FIXTURES_UPDATE_URL).permitAll()
                 .antMatchers(PUT, SET_USED_TOKEN_URL).permitAll()
-                .antMatchers(PUT, "/score/update").permitAll()
-                .antMatchers(GET, "/reset-password").permitAll()
-                .antMatchers(POST, "/users/sendResetPassword").permitAll()
-                .antMatchers(POST, "/users/resetPassword").permitAll()
-                .antMatchers(GET, "console/").permitAll()
-                .antMatchers(GET, "/socket/**").permitAll()
-                .antMatchers(DELETE, "/predictions/deduplicate").permitAll()
-                .antMatchers("/admin/**").hasAuthority("ADMIN")
+                .antMatchers(PUT, SCORE_UPDATE_URL).permitAll()
+                .antMatchers(GET, RESET_PASSWORD_URL).permitAll()
+                .antMatchers(POST, SEND_RESET_PASSWORD_URL).permitAll()
+                .antMatchers(POST, PROCESS_PASSWORD_RESET_URL).permitAll()
+                .antMatchers(GET, DB_CONSOLE_URL).permitAll()
+                .antMatchers(GET, SOCKET_URL).permitAll()
+                .antMatchers(DELETE, DEDUPLICATE_URL).permitAll()
+                .antMatchers(ADMIN_URL).hasAuthority(ADMIN_ROLE)
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(JWTAuthenticationFilter(authenticationManager()))
@@ -55,7 +65,7 @@ class WebSecurity : WebSecurityConfigurerAdapter() {
     @Bean
     internal fun corsConfigurationSource(): CorsConfigurationSource {
         val source = UrlBasedCorsConfigurationSource()
-        source.registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
+        source.registerCorsConfiguration(ALL_PATHS_URL, CorsConfiguration().applyPermitDefaultValues())
         return source
     }
 }

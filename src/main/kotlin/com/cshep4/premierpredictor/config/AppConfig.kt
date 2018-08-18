@@ -2,6 +2,7 @@ package com.cshep4.premierpredictor.config
 
 import com.cshep4.premierpredictor.constant.APIConstants.USER_ID
 import com.cshep4.premierpredictor.constant.SecurityConstants.HEADER_STRING
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.ALL_PATHS_URL
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -42,7 +43,7 @@ class AppConfig {
         config.addAllowedMethod("DELETE")
         config.addExposedHeader(HEADER_STRING)
         config.addExposedHeader(USER_ID)
-        source.registerCorsConfiguration("/**", config)
+        source.registerCorsConfiguration(ALL_PATHS_URL, config)
 
         return CorsFilter(source)
     }

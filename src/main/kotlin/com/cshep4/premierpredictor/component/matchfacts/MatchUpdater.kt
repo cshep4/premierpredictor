@@ -32,9 +32,7 @@ class MatchUpdater {
 
         val updatedMatchEntities = updated.map { MatchFactsEntity.fromDto(it) }
 
-//        launch {
         matchFactsRepository.saveAll(updatedMatchEntities)
-//        }
 
         return listOf(notUpdated, updated).flatten()
     }

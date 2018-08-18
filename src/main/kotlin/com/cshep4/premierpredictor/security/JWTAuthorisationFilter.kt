@@ -1,9 +1,10 @@
 package com.cshep4.premierpredictor.security
 
 import com.cshep4.premierpredictor.constant.SecurityConstants.HEADER_STRING
-import com.cshep4.premierpredictor.constant.SecurityConstants.LOGOUT_URL
+import com.cshep4.premierpredictor.constant.SecurityConstants.NON_ADMIN_ROLE
 import com.cshep4.premierpredictor.constant.SecurityConstants.SECRET
 import com.cshep4.premierpredictor.constant.SecurityConstants.TOKEN_PREFIX
+import com.cshep4.premierpredictor.constant.SecurityConstants.Url.LOGOUT_URL
 import com.cshep4.premierpredictor.extension.generateJwtToken
 import io.jsonwebtoken.Jwts
 import org.springframework.security.authentication.AuthenticationManager
@@ -48,7 +49,7 @@ class JWTAuthorisationFilter(authManager: AuthenticationManager) : BasicAuthenti
                 .body
 
         val user = jwt.issuer
-        val authorities = jwt["ROLE"] as String? ?: "USER"
+        val authorities = jwt["ROLE"] as String? ?: NON_ADMIN_ROLE
 
         return when {
             user != null -> UsernamePasswordAuthenticationToken(user, null, listOf(SimpleGrantedAuthority(authorities)))
