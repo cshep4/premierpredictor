@@ -104,6 +104,49 @@ data class MatchFacts(
 			dateTime = getDateTime(),
 			matchday = this.week!!.toInt())
 
+	fun toSantisedMatchFacts() = MatchFacts(
+			penaltyVisitor = this.penaltyVisitor,
+			venue = this.venue,
+			week = this.week,
+			visitorTeamName = this.visitorTeamName,
+			penaltyLocal = this.penaltyLocal,
+			localTeamScore = makeScoreNumeric(this.localTeamScore),
+			ftScore = this.ftScore,
+			etScore = this.etScore,
+			compId = this.compId,
+			venueCity = this.venueCity,
+			visitorTeamId = this.visitorTeamId,
+			timer = this.timer,
+			htScore = this.htScore,
+			localTeamId = this.localTeamId,
+			season = this.season,
+			localTeamName = this.localTeamName,
+			id = this.id,
+			time = this.time,
+			visitorTeamScore = makeScoreNumeric(this.visitorTeamScore),
+			formattedDate = this.formattedDate,
+			venueId = this.venueId,
+			events = this.events,
+			status = correctStatus(this.status),
+			commentary = this.commentary,
+			lastUpdated = this.lastUpdated)
+
+	private fun makeScoreNumeric(score: String?): String? {
+		if (score == null || score == "?") {
+			return ""
+		}
+
+		return score
+	}
+
+	private fun correctStatus(status: String?): String? {
+		if (status == null || ":" in status) {
+			return null
+		}
+
+		return status
+	}
+
 	@JsonIgnore
 	fun getDateTime(): LocalDateTime? {
 		val time = LocalTime.parse(this.time)

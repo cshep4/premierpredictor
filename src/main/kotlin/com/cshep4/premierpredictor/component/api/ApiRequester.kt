@@ -19,7 +19,7 @@ class ApiRequester {
         val (_, _, result) = url.httpGet().responseString()
 
         return result.fold({ data ->
-            return@fold ObjectMapper().readValue(data, Array<MatchFacts>::class.java).toList()
+            return@fold ObjectMapper().readValue(data, Array<MatchFacts>::class.java).toList().map { it.toSantisedMatchFacts() }
         }, {
             return@fold emptyList()
         })
