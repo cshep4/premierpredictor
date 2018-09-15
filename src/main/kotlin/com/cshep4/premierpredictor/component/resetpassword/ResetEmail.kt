@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class ResetEmail {
-    private val subject = "World Cup Predictor 2018 Password Reset"
+    private val subject = "Premier Predictor Password Reset"
 
     @Autowired
     private lateinit var emailSender: Email
@@ -33,6 +33,6 @@ class ResetEmail {
 
                 |Regards,
 
-                |The World Cup 2018 Predictor Team""".trimMargin()
+                |The Premier Predictor Team""".trimMargin()
     }
 }
