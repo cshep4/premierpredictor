@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 class FormFormatter {
     fun formatLastFiveGames(teamMatches: Map<String, List<Match>>): Map<String, TeamForm> {
-        return teamMatches.map { Pair(it.key, createTeamForm(it.key, it.value.take(5))) }.toMap()
+        return teamMatches.map { Pair(it.key, createTeamForm(it.key, it.value.takeLast(5))) }.toMap()
     }
 
     private fun createTeamForm(teamName: String, matches: List<Match>): TeamForm {
