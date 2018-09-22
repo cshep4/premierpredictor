@@ -6,8 +6,6 @@ import com.cshep4.premierpredictor.entity.PredictionEntity
 import com.cshep4.premierpredictor.repository.sql.PredictionsRepository
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.team.TeamService
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Clock
@@ -68,22 +66,22 @@ class PredictionsService {
     }
 
     fun retrievePredictorData(id: Long): PredictorData {
-        return runBlocking {
+//        return runBlocking {
             var predictions: List<PredictedMatch> = emptyList()
             var forms: Map<String, TeamForm> = emptyMap()
 
-            val predictionsCoRoutine = async {
+//            val predictionsCoRoutine = async {
                 predictions = fixturesService.retrieveAllMatchesWithPredictions(id)
-            }
-
-            val formCoRoutine = async {
+//            }
+//
+//            val formCoRoutine = async {
                 forms = teamService.retrieveRecentForms()
-            }
+//            }
 
-            predictionsCoRoutine.await()
-            formCoRoutine.await()
+//            predictionsCoRoutine.await()
+//            formCoRoutine.await()
 
-            PredictorData(predictions = predictions, forms = forms)
-        }
+            return PredictorData(predictions = predictions, forms = forms)
+//        }
     }
 }
