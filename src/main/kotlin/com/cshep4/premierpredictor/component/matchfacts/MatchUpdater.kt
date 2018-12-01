@@ -42,6 +42,15 @@ class MatchUpdater {
 
         apiMatch.commentary = match.commentary
         apiMatch.lastUpdated = time.localDateTimeNow()
+        
+        if (apiMatch.localTeamName == "Manchester Utd") {
+            apiMatch.localTeamName = "Manchester United"
+        }
+        
+        if (apiMatch.visitorTeamName == "Manchester Utd") {
+            apiMatch.visitorTeamName = "Manchester United"
+        }
+            
 
         return apiMatch
     }
