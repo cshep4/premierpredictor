@@ -108,7 +108,7 @@ data class MatchFacts(
 			penaltyVisitor = this.penaltyVisitor,
 			venue = this.venue,
 			week = this.week,
-			visitorTeamName = this.visitorTeamName,
+			visitorTeamName = getFullTeamName(this.visitorTeamName!!),
 			penaltyLocal = this.penaltyLocal,
 			localTeamScore = makeScoreNumeric(this.localTeamScore),
 			ftScore = this.ftScore,
@@ -120,7 +120,7 @@ data class MatchFacts(
 			htScore = this.htScore,
 			localTeamId = this.localTeamId,
 			season = this.season,
-			localTeamName = this.localTeamName,
+			localTeamName = getFullTeamName(this.localTeamName!!),
 			id = this.id,
 			time = this.time,
 			visitorTeamScore = makeScoreNumeric(this.visitorTeamScore),
@@ -183,6 +183,7 @@ data class MatchFacts(
 			"Tottenham" -> "Tottenham Hotspur"
 			"West Ham" -> "West Ham United"
 			"Wolves" -> "Wolverhampton Wanderers"
+			"Manchester Utd" -> "Manchester United"
 			else -> name
 		}
 	}
