@@ -11,6 +11,7 @@ import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.service.prediction.MatchPredictionSummaryService
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -41,17 +42,17 @@ class LiveMatchService {
 //    @Autowired
 //    private lateinit var teamService: TeamService
 
-    fun retrieveLiveMatchFacts(id: String): MatchFacts? = runBlocking {
+    fun retrieveLiveMatchFacts(id: String): MatchFacts? {
         val storedMatch = matchFactsRepository
                 .findById(id)
                 .map { it.toDto() }
                 .orElse(null)
 
-        launch {
+        GlobalScope.launch {
             updateMatchFacts(storedMatch, id)
         }
 
-        storedMatch
+        return storedMatch
     }
 
     private fun updateMatchFacts(storedMatch: MatchFacts?, id: String) {
