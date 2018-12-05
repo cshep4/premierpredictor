@@ -48,7 +48,7 @@ class PredictionsController {
         return ResponseEntity.ok(predictions)
     }
 
-    @DeleteMapping("/deduplicate")
+//    @DeleteMapping("/deduplicate")
     fun removeDuplicatesIfAnyExist(@RequestParam("mode", required = true, defaultValue = "QUICK") mode: DuplicateSearch = QUICK) : ResponseEntity<DuplicateSummary> {
         val duplicateSummary = predictionCleanerService.removeDuplicatesIfAnyExist(mode)
 
