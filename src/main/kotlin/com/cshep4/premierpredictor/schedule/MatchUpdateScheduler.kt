@@ -6,7 +6,8 @@ import com.cshep4.premierpredictor.extension.isPlaying
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.fixtures.ResultsService
 import com.cshep4.premierpredictor.service.livematch.LiveMatchService
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.scheduling.annotation.Scheduled
@@ -62,7 +63,7 @@ class MatchUpdateScheduler {
         sendUpdates(liveMatches)
     }
 
-    private fun sendUpdates(liveMatches: List<MatchFacts>) {
+    private fun sendUpdates(liveMatches: List<MatchFacts>) = runBlocking {
 //        launch {
 //            liveMatches.forEach { template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + it.id, it) }
 //        }

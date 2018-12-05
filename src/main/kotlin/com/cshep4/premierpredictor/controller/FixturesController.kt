@@ -8,9 +8,10 @@ import com.cshep4.premierpredictor.schedule.MatchUpdateScheduler
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.fixtures.ResultsService
 import com.cshep4.premierpredictor.service.user.UserScoreService
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
@@ -33,7 +34,7 @@ class FixturesController {
     private fun doScoreUpdate(score: Boolean?): Boolean = score != null && score
 
     @PutMapping("/update")
-    fun updateFixtures(@RequestParam("score") score: Boolean?) : ResponseEntity<List<Match>> {
+    fun updateFixtures(@RequestParam("score") score: Boolean?) : ResponseEntity<List<Match>>  = runBlocking {
         val fixtures = resultsService.update()
 
         launch {
@@ -42,8 +43,8 @@ class FixturesController {
             }
         }
 
-        return when {
-            fixtures.isEmpty() -> ResponseEntity.status(BAD_REQUEST).build()
+        when {
+            fixtures.isEmpty() -> ResponseEntity.status(INTERNAL_SERVER_ERROR).build()
             else -> ResponseEntity.ok(fixtures)
         }
     }

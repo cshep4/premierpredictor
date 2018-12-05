@@ -15,7 +15,8 @@ import com.cshep4.premierpredictor.extension.isUpcoming
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.repository.sql.FixturesRepository
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
@@ -60,7 +61,7 @@ class FixturesService {
         return predictionMerger.merge(matches, predictions)
     }
 
-    fun retrieveAllUpcomingFixtures() : Map<LocalDate, List<MatchFacts>> {
+    fun retrieveAllUpcomingFixtures() : Map<LocalDate, List<MatchFacts>> = runBlocking {
         val upcomingMatches = matchFactsRepository.findAll()
                 .filter { it.getDateTime()!!.isToday() || it.getDateTime()!!.isUpcoming() }
                 .sortedBy { it.getDateTime() }
@@ -68,7 +69,7 @@ class FixturesService {
                 .map { it.toDto() }
 
         if (upcomingMatches.isEmpty()) {
-            return emptyMap()
+            emptyMap<LocalDate, List<MatchFacts>>()
         }
 
         launch {
@@ -79,7 +80,7 @@ class FixturesService {
             }
         }
 
-        return fixturesByDate.format(upcomingMatches)
+        fixturesByDate.format(upcomingMatches)
     }
 
     fun retrieveLiveScoreForMatch(id: String) : MatchFacts? {

@@ -96,8 +96,8 @@ data class MatchFacts(
 ) {
 	fun toMatch(): Match = Match(
 			id = this.id!!.toLong(),
-			hTeam = getFullTeamName(this.localTeamName!!),
-			aTeam = getFullTeamName(this.visitorTeamName!!),
+			hTeam = getFullTeamName(this.localTeamName)!!,
+			aTeam = getFullTeamName(this.visitorTeamName)!!,
 			hGoals = this.localTeamScore?.toIntOrNull(),
 			aGoals = this.visitorTeamScore?.toIntOrNull(),
 			played = getPlayed(),
@@ -108,7 +108,7 @@ data class MatchFacts(
 			penaltyVisitor = this.penaltyVisitor,
 			venue = this.venue,
 			week = this.week,
-			visitorTeamName = getFullTeamName(this.visitorTeamName!!),
+			visitorTeamName = getFullTeamName(this.visitorTeamName),
 			penaltyLocal = this.penaltyLocal,
 			localTeamScore = makeScoreNumeric(this.localTeamScore),
 			ftScore = this.ftScore,
@@ -120,7 +120,7 @@ data class MatchFacts(
 			htScore = this.htScore,
 			localTeamId = this.localTeamId,
 			season = this.season,
-			localTeamName = getFullTeamName(this.localTeamName!!),
+			localTeamName = getFullTeamName(this.localTeamName),
 			id = this.id,
 			time = this.time,
 			visitorTeamScore = makeScoreNumeric(this.visitorTeamScore),
@@ -172,7 +172,7 @@ data class MatchFacts(
 		}
 	}
 
-	private fun getFullTeamName(name: String): String {
+	private fun getFullTeamName(name: String?): String? {
 		return when (name) {
 			"Bournemouth" -> "AFC Bournemouth"
 			"Brighton" -> "Brighton & Hove Albion"

@@ -11,9 +11,9 @@ import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.service.prediction.MatchPredictionSummaryService
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
@@ -38,39 +38,45 @@ class LiveMatchService {
     @Autowired
     private lateinit var template: SimpMessagingTemplate
 
-    fun retrieveLiveMatchFacts(id: String): MatchFacts? {
+//    @Autowired
+//    private lateinit var teamService: TeamService
+
+    fun retrieveLiveMatchFacts(id: String): MatchFacts? = runBlocking {
         val storedMatch = matchFactsRepository
                 .findById(id)
                 .map { it.toDto() }
                 .orElse(null)
 
         launch {
-            var updatedMatch: MatchFacts? = null
-            var updatedCommentary: Commentary? = null
-
-            runBlocking {
-                val matchFactsCoRoutine = async {
-                    if (doesMatchFactsNeedUpdating(storedMatch)) {
-                        updatedMatch = matchUpdater.retrieveMatchFromApi(id)
-                    }
-                }
-
-                val commentaryCoRoutine = async {
-                    if (doesCommentaryNeedUpdating(storedMatch)) {
-                        updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
-                    }
-                }
-
-
-                matchFactsCoRoutine.await()
-                commentaryCoRoutine.await()
-
-                val match = getRelevantMatchFacts(storedMatch, updatedMatch, updatedCommentary) ?: return@runBlocking
-                template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + match.id, match)
-            }
+            updateMatchFacts(storedMatch, id)
         }
 
-        return storedMatch
+        storedMatch
+    }
+
+    private fun updateMatchFacts(storedMatch: MatchFacts?, id: String) {
+        var updatedMatch: MatchFacts? = null
+        var updatedCommentary: Commentary? = null
+
+        runBlocking {
+            val matchFactsCoRoutine = async {
+                if (doesMatchFactsNeedUpdating(storedMatch)) {
+                    updatedMatch = matchUpdater.retrieveMatchFromApi(id)
+                }
+            }
+
+            val commentaryCoRoutine = async {
+                if (doesCommentaryNeedUpdating(storedMatch)) {
+                    updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
+                }
+            }
+
+            matchFactsCoRoutine.await()
+            commentaryCoRoutine.await()
+
+            val match = getRelevantMatchFacts(storedMatch, updatedMatch, updatedCommentary) ?: return@runBlocking
+            template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + match.id, match)
+        }
     }
 
     private fun doesMatchFactsNeedUpdating(matchFacts: MatchFacts?) =
@@ -91,6 +97,34 @@ class LiveMatchService {
 
         return matchFacts
     }
+
+//    fun retrieveMatchSummary(matchId: String, id: String): MatchSummary? {
+//        return runBlocking {
+//            val matchFacts = retrieveLiveMatchFacts(matchId) ?: return@runBlocking null
+//
+//            var prediction: Prediction? = null
+//            var predictionSummary = MatchPredictionSummary()
+//            var forms: Map<String, TeamForm> = emptyMap()
+//
+//            val predictionCoRoutine = async {
+//                prediction = predictionsService.retrievePredictionByUserIdForMatch(id.toLong(), matchId.toLong())
+//            }
+//
+//            val predictionSummaryCoRoutine = async {
+//                predictionSummary = matchPredictionSummaryService.retrieveMatchPredictionSummary(matchId)
+//            }
+//
+//            val formsCoRoutine = async {
+//                forms = teamService.retrieveRecentForms()
+//            }
+//
+//            predictionCoRoutine.await()
+//            predictionSummaryCoRoutine.await()
+//            formsCoRoutine.await()
+//
+//            MatchSummary(match = matchFacts, prediction = prediction, predictionSummary = predictionSummary, forms = forms)
+//        }
+//    }
 
     fun retrieveMatchSummary(matchId: String, id: String): MatchSummary? {
         val matchFacts = retrieveLiveMatchFacts(matchId) ?: return null
