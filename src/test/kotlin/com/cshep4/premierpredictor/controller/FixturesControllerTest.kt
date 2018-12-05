@@ -52,12 +52,12 @@ internal class FixturesControllerTest {
     }
 
     @Test
-    fun `'updateFixtures' returns BAD_REQUEST fixtures are not updated`() {
+    fun `'updateFixtures' returns INTERNAL_SERVER_ERROR fixtures are not updated`() {
         whenever(resultsService.update()).thenReturn(emptyList())
 
         val result = fixturesController.updateFixtures(true)
 
-        assertThat(result.statusCode, Is(BAD_REQUEST))
+        assertThat(result.statusCode, Is(INTERNAL_SERVER_ERROR))
         assertThat(result.body, Is(CoreMatchers.nullValue()))
         verify(userScoreService, times(0)).updateScores()
     }

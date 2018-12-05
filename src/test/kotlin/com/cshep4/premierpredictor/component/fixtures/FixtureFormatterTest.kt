@@ -62,8 +62,8 @@ internal class FixtureFormatterTest {
         val result = fixtureFormatter.groupIntoTeams(matches)
 
         val expectedResult = mapOf(
-                Pair(TEAM_1, listOf(m1, m2, m3)),
-                Pair(TEAM_2, listOf(m1, m3)),
+                Pair(TEAM_1, listOf(m3, m2, m1)),
+                Pair(TEAM_2, listOf(m3, m1)),
                 Pair(TEAM_3, listOf(m2))
         )
 

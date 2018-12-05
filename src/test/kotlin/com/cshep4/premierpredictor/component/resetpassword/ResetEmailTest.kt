@@ -11,7 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner
 
 @RunWith(MockitoJUnitRunner::class)
 internal class ResetEmailTest {
-    private val subject = "World Cup Predictor 2018 Password Reset"
+    private val subject = "Premier Predictor Password Reset"
     private val signature = "sign"
     private val emailAddress = "email"
     private val link = "$RESET_PASSWORD_LINK?email=$emailAddress&signature=$signature"
@@ -28,7 +28,7 @@ internal class ResetEmailTest {
 
                 |Regards,
 
-                |The World Cup 2018 Predictor Team""".trimMargin()
+                |The Premier Predictor Team""".trimMargin()
 
     @Mock
     private lateinit var email: Email

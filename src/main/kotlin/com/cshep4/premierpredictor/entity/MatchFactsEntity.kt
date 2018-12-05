@@ -78,7 +78,7 @@ data class MatchFactsEntity(
             penaltyVisitor = this.penaltyVisitor,
             venue = this.venue,
             week = this.week,
-            visitorTeamName = this.visitorTeamName,
+            visitorTeamName = getFullTeamName(this.visitorTeamName),
             penaltyLocal = this.penaltyLocal,
             localTeamScore = getNumericScore(this.localTeamScore),
             ftScore = this.ftScore,
@@ -90,7 +90,7 @@ data class MatchFactsEntity(
             htScore = this.htScore,
             localTeamId = this.localTeamId,
             season = this.season,
-            localTeamName = this.localTeamName,
+            localTeamName = getFullTeamName(this.localTeamName),
             id = this.id,
             time = this.time,
             visitorTeamScore = getNumericScore(this.visitorTeamScore),
@@ -151,6 +151,22 @@ data class MatchFactsEntity(
             }
 
             return score
+        }
+
+        private fun getFullTeamName(name: String?): String? {
+            return when (name) {
+                "Bournemouth" -> "AFC Bournemouth"
+                "Brighton" -> "Brighton & Hove Albion"
+                "Cardiff" -> "Cardiff City"
+                "Huddersfield" -> "Huddersfield Town"
+                "Leicester" -> "Leicester City"
+                "Newcastle" -> "Newcastle United"
+                "Tottenham" -> "Tottenham Hotspur"
+                "West Ham" -> "West Ham United"
+                "Wolves" -> "Wolverhampton Wanderers"
+                "Manchester Utd" -> "Manchester United"
+                else -> name
+            }
         }
 
         private fun correctStatus(status: String?): String? {

@@ -42,27 +42,27 @@ internal class FormFormatterTest {
 
         val expectedOutput = mapOf(
                 Pair(TEAM_1, TeamForm(form = listOf(
-                        TeamMatchResult(result = WIN, score = "1-0", opponent = TEAM_2, location = HOME),
-                        TeamMatchResult(result = WIN, score = "2-1", opponent = TEAM_2, location = HOME),
-                        TeamMatchResult(result = LOSS, score = "0-4", opponent = TEAM_2, location = HOME),
-                        TeamMatchResult(result = DRAW, score = "3-3", opponent = TEAM_2, location = HOME),
-                        TeamMatchResult(result = LOSS, score = "1-2", opponent = TEAM_2, location = HOME)
+                        TeamMatchResult(result = DRAW, score = "1-1", opponent = TEAM_3, location = HOME),
+                        TeamMatchResult(result = LOSS, score = "0-1", opponent = TEAM_3, location = HOME),
+                        TeamMatchResult(result = LOSS, score = "0-1", opponent = TEAM_3, location = HOME),
+                        TeamMatchResult(result = DRAW, score = "2-2", opponent = TEAM_3, location = HOME),
+                        TeamMatchResult(result = LOSS, score = "1-3", opponent = TEAM_3, location = HOME)
                         ))
                 ),
                 Pair(TEAM_2, TeamForm(form = listOf(
-                        TeamMatchResult(result = LOSS, score = "1-0", opponent = TEAM_1, location = AWAY),
                         TeamMatchResult(result = LOSS, score = "2-1", opponent = TEAM_1, location = AWAY),
                         TeamMatchResult(result = WIN, score = "0-4", opponent = TEAM_1, location = AWAY),
                         TeamMatchResult(result = DRAW, score = "3-3", opponent = TEAM_1, location = AWAY),
-                        TeamMatchResult(result = WIN, score = "1-2", opponent = TEAM_1, location = AWAY)
+                        TeamMatchResult(result = WIN, score = "1-2", opponent = TEAM_1, location = AWAY),
+                        TeamMatchResult(result = LOSS, score = "3-1", opponent = TEAM_1, location = AWAY)
                         ))
                 ),
                 Pair(TEAM_3, TeamForm(form = listOf(
-                        TeamMatchResult(result = LOSS, score = "2-0", opponent = TEAM_1, location = AWAY),
                         TeamMatchResult(result = DRAW, score = "1-1", opponent = TEAM_1, location = AWAY),
                         TeamMatchResult(result = WIN, score = "0-1", opponent = TEAM_1, location = AWAY),
                         TeamMatchResult(result = WIN, score = "0-1", opponent = TEAM_1, location = AWAY),
-                        TeamMatchResult(result = DRAW, score = "2-2", opponent = TEAM_1, location = AWAY)
+                        TeamMatchResult(result = DRAW, score = "2-2", opponent = TEAM_1, location = AWAY),
+                        TeamMatchResult(result = WIN, score = "1-3", opponent = TEAM_1, location = AWAY)
                         ))
                 )
         )

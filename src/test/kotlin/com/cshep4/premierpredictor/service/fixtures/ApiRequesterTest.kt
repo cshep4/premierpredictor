@@ -27,7 +27,7 @@ internal class ApiRequesterTest {
 
     @Test
     fun `'retrieveFixtures' parses API result and returns object`() {
-        val matches = listOf(MatchFacts(), MatchFacts())
+        val matches = listOf(MatchFacts(localTeamScore = "", visitorTeamScore = ""), MatchFacts(localTeamScore = "", visitorTeamScore = ""))
         val jsonResponse = ObjectMapper().writeValueAsString(matches)
 
         every { client.executeRequest(any()).httpStatusCode } returns 200
