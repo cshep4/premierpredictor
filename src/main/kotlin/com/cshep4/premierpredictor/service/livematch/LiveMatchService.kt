@@ -12,7 +12,7 @@ import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.service.prediction.MatchPredictionSummaryService
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
@@ -55,29 +55,33 @@ class LiveMatchService {
         return storedMatch
     }
 
-    private fun updateMatchFacts(storedMatch: MatchFacts?, id: String) {
-        var updatedMatch: MatchFacts? = null
-        var updatedCommentary: Commentary? = null
+    private fun updateMatchFacts(storedMatch: MatchFacts?, id: String) = runBlocking {
+        val matchChannel = Channel<MatchFacts?>()
+        val commentaryChannel = Channel<Commentary?>()
 
-        runBlocking {
-            val matchFactsCoRoutine = async {
-                if (doesMatchFactsNeedUpdating(storedMatch)) {
-                    updatedMatch = matchUpdater.retrieveMatchFromApi(id)
-                }
+        launch {
+            var updatedMatch: MatchFacts? = null
+
+            if (doesMatchFactsNeedUpdating(storedMatch)) {
+                updatedMatch = matchUpdater.retrieveMatchFromApi(id)
             }
 
-            val commentaryCoRoutine = async {
-                if (doesCommentaryNeedUpdating(storedMatch)) {
-                    updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
-                }
-            }
-
-            matchFactsCoRoutine.await()
-            commentaryCoRoutine.await()
-
-            val match = getRelevantMatchFacts(storedMatch, updatedMatch, updatedCommentary) ?: return@runBlocking
-            template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + match.id, match)
+            matchChannel.send(updatedMatch)
         }
+
+        launch {
+            var updatedCommentary: Commentary? = null
+
+            if (doesCommentaryNeedUpdating(storedMatch)) {
+                updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
+            }
+
+            commentaryChannel.send(updatedCommentary)
+        }
+
+        val match = getRelevantMatchFacts(storedMatch, matchChannel.receive(), commentaryChannel.receive()) ?: return@runBlocking
+
+        template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + match.id, match)
     }
 
     private fun doesMatchFactsNeedUpdating(matchFacts: MatchFacts?) =

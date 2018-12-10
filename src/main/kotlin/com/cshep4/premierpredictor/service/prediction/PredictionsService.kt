@@ -6,6 +6,9 @@ import com.cshep4.premierpredictor.entity.PredictionEntity
 import com.cshep4.premierpredictor.repository.sql.PredictionsRepository
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.team.TeamService
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.Clock
@@ -65,23 +68,18 @@ class PredictionsService {
         return createPredictionSummary.format(matches, predictions)
     }
 
-    fun retrievePredictorData(id: Long): PredictorData {
-//        return runBlocking {
-            var predictions: List<PredictedMatch> = emptyList()
-            var forms: Map<String, TeamForm> = emptyMap()
+    fun retrievePredictorData(id: Long): PredictorData = runBlocking {
+        val predictions = Channel<List<PredictedMatch>>()
+        val forms = Channel<Map<String, TeamForm>>()
 
-//            val predictionsCoRoutine = async {
-                predictions = fixturesService.retrieveAllMatchesWithPredictions(id)
-//            }
-//
-//            val formCoRoutine = async {
-                forms = teamService.retrieveRecentForms()
-//            }
+        launch {
+            predictions.send(fixturesService.retrieveAllMatchesWithPredictions(id))
+        }
 
-//            predictionsCoRoutine.await()
-//            formCoRoutine.await()
+        launch {
+            forms.send(teamService.retrieveRecentForms())
+        }
 
-            return PredictorData(predictions = predictions, forms = forms)
-//        }
+        PredictorData(predictions = predictions.receive(), forms = forms.receive())
     }
 }
