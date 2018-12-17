@@ -25,6 +25,6 @@ class FixtureFormatter {
 
         awayTeamMatches.forEach { k, v -> allMatches.merge(k, v, remappingFunction) }
 
-        return allMatches.map { Pair(it.key, it.value.sortedBy { it.dateTime }) }.toMap()
+        return allMatches.map { Pair(it.key, it.value.sortedBy { v -> v.dateTime }) }.toMap()
     }
 }

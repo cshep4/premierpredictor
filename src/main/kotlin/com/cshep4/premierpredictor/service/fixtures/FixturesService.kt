@@ -3,20 +3,16 @@ package com.cshep4.premierpredictor.service.fixtures
 import com.cshep4.premierpredictor.component.fixtures.FixturesByDate
 import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
 import com.cshep4.premierpredictor.component.prediction.PredictionMerger
-import com.cshep4.premierpredictor.constant.MatchConstants.UPCOMING_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
 import com.cshep4.premierpredictor.entity.MatchEntity
 import com.cshep4.premierpredictor.extension.hasPlayed
-import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.extension.isToday
 import com.cshep4.premierpredictor.extension.isUpcoming
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.repository.sql.FixturesRepository
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
@@ -72,13 +68,13 @@ class FixturesService {
             return emptyMap()
         }
 
-        GlobalScope.launch {
-            if (upcomingMatches.any { it.lastUpdated!!.isInNeedOfUpdate() }) {
-                val updatedMatches = matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
-
-                template.convertAndSend(UPCOMING_SUBSCRIPTION, updatedMatches)
-            }
-        }
+//        GlobalScope.launch {
+//            if (upcomingMatches.any { it.lastUpdated!!.isInNeedOfUpdate() }) {
+//                val updatedMatches = matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
+//
+//                template.convertAndSend(UPCOMING_SUBSCRIPTION, updatedMatches)
+//            }
+//        }
 
         return fixturesByDate.format(upcomingMatches)
     }
@@ -88,9 +84,9 @@ class FixturesService {
                 .map { it.toDto() }
                 .orElse(null)
 
-        if (match == null || match.lastUpdated!!.isInNeedOfUpdate()) {
-            return matchUpdater.updateMatch(id, match)
-        }
+//        if (match == null || match.lastUpdated!!.isInNeedOfUpdate()) {
+//            return matchUpdater.updateMatch(id, match)
+//        }
 
         return match
     }

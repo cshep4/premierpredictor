@@ -2,19 +2,11 @@ package com.cshep4.premierpredictor.service.livematch
 
 import com.cshep4.premierpredictor.component.matchfacts.CommentaryUpdater
 import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
-import com.cshep4.premierpredictor.constant.MatchConstants.LIVE_MATCH_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.MatchSummary
-import com.cshep4.premierpredictor.data.api.live.commentary.Commentary
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
-import com.cshep4.premierpredictor.entity.MatchFactsEntity
-import com.cshep4.premierpredictor.extension.isInNeedOfUpdate
 import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.service.prediction.MatchPredictionSummaryService
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
@@ -48,61 +40,61 @@ class LiveMatchService {
                 .map { it.toDto() }
                 .orElse(null)
 
-        GlobalScope.launch {
-            updateMatchFacts(storedMatch, id)
-        }
+//        GlobalScope.launch {
+//            updateMatchFacts(storedMatch, id)
+//        }
 
         return storedMatch
     }
 
-    private fun updateMatchFacts(storedMatch: MatchFacts?, id: String) = runBlocking {
-        val matchChannel = Channel<MatchFacts?>()
-        val commentaryChannel = Channel<Commentary?>()
-
-        launch {
-            var updatedMatch: MatchFacts? = null
-
-            if (doesMatchFactsNeedUpdating(storedMatch)) {
-                updatedMatch = matchUpdater.retrieveMatchFromApi(id)
-            }
-
-            matchChannel.send(updatedMatch)
-        }
-
-        launch {
-            var updatedCommentary: Commentary? = null
-
-            if (doesCommentaryNeedUpdating(storedMatch)) {
-                updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
-            }
-
-            commentaryChannel.send(updatedCommentary)
-        }
-
-        val match = getRelevantMatchFacts(storedMatch, matchChannel.receive(), commentaryChannel.receive()) ?: return@runBlocking
-
-        template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + match.id, match)
-    }
-
-    private fun doesMatchFactsNeedUpdating(matchFacts: MatchFacts?) =
-            (matchFacts == null || matchFacts.lastUpdated!!.isInNeedOfUpdate()) && matchFacts?.status != "FT"
-
-    private fun doesCommentaryNeedUpdating(matchFacts: MatchFacts?) =
-            (matchFacts?.commentary?.lastUpdated == null || matchFacts.commentary!!.lastUpdated!!.isInNeedOfUpdate()) && matchFacts?.status != "FT"
-
-    private fun getRelevantMatchFacts(storedMatch: MatchFacts?, updatedMatch: MatchFacts?, updatedCommentary: Commentary?): MatchFacts? {
-        val matchFacts = updatedMatch ?: storedMatch ?: return null
-
-        matchFacts.commentary = when (updatedCommentary) {
-            null -> storedMatch?.commentary
-            else -> updatedCommentary
-        }
-
-        matchFactsRepository.save(MatchFactsEntity.fromDto(matchFacts))
-
-        return matchFacts
-    }
-
+//    private fun updateMatchFacts(storedMatch: MatchFacts?, id: String) = runBlocking {
+//        val matchChannel = Channel<MatchFacts?>()
+//        val commentaryChannel = Channel<Commentary?>()
+//
+//        launch {
+//            var updatedMatch: MatchFacts? = null
+//
+//            if (doesMatchFactsNeedUpdating(storedMatch)) {
+//                updatedMatch = matchUpdater.retrieveMatchFromApi(id)
+//            }
+//
+//            matchChannel.send(updatedMatch)
+//        }
+//
+//        launch {
+//            var updatedCommentary: Commentary? = null
+//
+//            if (doesCommentaryNeedUpdating(storedMatch)) {
+//                updatedCommentary = commentaryUpdater.retrieveCommentaryFromApi(id)
+//            }
+//
+//            commentaryChannel.send(updatedCommentary)
+//        }
+//
+//        val match = getRelevantMatchFacts(storedMatch, matchChannel.receive(), commentaryChannel.receive()) ?: return@runBlocking
+//
+//        template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + match.id, match)
+//    }
+//
+//    private fun doesMatchFactsNeedUpdating(matchFacts: MatchFacts?) =
+//            (matchFacts == null || matchFacts.lastUpdated!!.isInNeedOfUpdate()) && matchFacts?.status != "FT"
+//
+//    private fun doesCommentaryNeedUpdating(matchFacts: MatchFacts?) =
+//            (matchFacts?.commentary?.lastUpdated == null || matchFacts.commentary!!.lastUpdated!!.isInNeedOfUpdate()) && matchFacts?.status != "FT"
+//
+//    private fun getRelevantMatchFacts(storedMatch: MatchFacts?, updatedMatch: MatchFacts?, updatedCommentary: Commentary?): MatchFacts? {
+//        val matchFacts = updatedMatch ?: storedMatch ?: return null
+//
+//        matchFacts.commentary = when (updatedCommentary) {
+//            null -> storedMatch?.commentary
+//            else -> updatedCommentary
+//        }
+//
+//        matchFactsRepository.save(MatchFactsEntity.fromDto(matchFacts))
+//
+//        return matchFacts
+//    }
+//
 //    fun retrieveMatchSummary(matchId: String, id: String): MatchSummary? {
 //        return runBlocking {
 //            val matchFacts = retrieveLiveMatchFacts(matchId) ?: return@runBlocking null

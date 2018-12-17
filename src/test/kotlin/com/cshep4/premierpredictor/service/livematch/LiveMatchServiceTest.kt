@@ -171,6 +171,7 @@ internal class LiveMatchServiceTest {
     }
 
     @Test
+    @Ignore(value = "match updates no longer handled here")
     fun `'retrieveLiveMatchFacts' will return current match facts and commentary if nothing returned from api even if they need updating`() {
         val commentary = Commentary(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 5))
         val matchFacts = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 5), commentary = commentary)

@@ -10,7 +10,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.simp.SimpMessagingTemplate
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
@@ -29,7 +28,7 @@ class MatchUpdateScheduler {
     @Autowired
     private lateinit var resultsService: ResultsService
 
-    @Scheduled(cron = "0 1,31 * * * *")
+//    @Scheduled(cron = "0 1,31 * * * *")
     fun getMatchesCurrentlyPlaying() {
         val matches = fixturesService.retrieveAllUpcomingFixtures()
                 .values
@@ -40,12 +39,12 @@ class MatchUpdateScheduler {
         addLiveMatch(matches)
     }
 
-    @Scheduled(cron = "0 0 3 * * ?", zone = "GMT")
+//    @Scheduled(cron = "0 0 3 * * ?", zone = "GMT")
     fun updateMatchesAt3amEachDay() {
         resultsService.update()
     }
 
-    @Scheduled(fixedDelay = 20000)
+//    @Scheduled(fixedDelay = 20000)
     fun updateLiveScores() {
         val liveMatches = liveMatchIds
                 .mapNotNull { liveMatchService.retrieveLiveMatchFacts(it) }
@@ -64,10 +63,6 @@ class MatchUpdateScheduler {
     }
 
     private fun sendUpdates(liveMatches: List<MatchFacts>) {
-//        launch {
-//            liveMatches.forEach { template.convertAndSend(LIVE_MATCH_SUBSCRIPTION + it.id, it) }
-//        }
-
         GlobalScope.launch {
             template.convertAndSend(UPCOMING_SUBSCRIPTION, liveMatches)
         }

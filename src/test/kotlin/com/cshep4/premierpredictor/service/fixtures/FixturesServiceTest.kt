@@ -18,6 +18,7 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
@@ -210,6 +211,7 @@ internal class FixturesServiceTest {
     }
 
     @Test
+    @Ignore(value = "match updates no longer handled here")
     fun `'retrieveLiveScoreForMatch' will retrieve the match from the api if it does not exist in the db, with lastUpdated set`() {
         val expectedResult = MatchFacts()
 
@@ -223,6 +225,7 @@ internal class FixturesServiceTest {
     }
 
     @Test
+    @Ignore(value = "match updates no longer handled here")
     fun `'retrieveLiveScoreForMatch' will retrieve the match from the api and update the db if the match was last updated over 20 seconds ago`() {
         val currentlyStoredMatchEntity = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 1))
         val currentlyStoredMatch = currentlyStoredMatchEntity.toDto()
@@ -246,7 +249,7 @@ internal class FixturesServiceTest {
         val result = fixturesService.retrieveLiveScoreForMatch("1")
 
         assertThat(result, Is(nullValue()))
-        verify(matchUpdater).updateMatch("1", null)
+//        verify(matchUpdater).updateMatch("1", null)
     }
 
     @Test
