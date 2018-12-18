@@ -1,13 +1,9 @@
 package com.cshep4.premierpredictor.schedule
 
-import com.cshep4.premierpredictor.constant.MatchConstants.UPCOMING_SUBSCRIPTION
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
-import com.cshep4.premierpredictor.extension.isPlaying
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.fixtures.ResultsService
 import com.cshep4.premierpredictor.service.livematch.LiveMatchService
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Component
@@ -30,45 +26,45 @@ class MatchUpdateScheduler {
 
 //    @Scheduled(cron = "0 1,31 * * * *")
     fun getMatchesCurrentlyPlaying() {
-        val matches = fixturesService.retrieveAllUpcomingFixtures()
-                .values
-                .flatten()
-                .filter { it.isPlaying() }
-                .map { it.id!! }
-
-        addLiveMatch(matches)
+//        val matches = fixturesService.retrieveAllUpcomingFixtures()
+//                .values
+//                .flatten()
+//                .filter { it.isPlaying() }
+//                .map { it.id!! }
+//
+//        addLiveMatch(matches)
     }
 
 //    @Scheduled(cron = "0 0 3 * * ?", zone = "GMT")
     fun updateMatchesAt3amEachDay() {
-        resultsService.update()
+//        resultsService.update()
     }
 
 //    @Scheduled(fixedDelay = 20000)
     fun updateLiveScores() {
-        val liveMatches = liveMatchIds
-                .mapNotNull { liveMatchService.retrieveLiveMatchFacts(it) }
-
-        liveMatchIds.removeIf { id -> !liveMatches.find { it.id == id }.isPlaying() }
-
-        val finishedMatches = liveMatches
-                .filter { it.status == "FT" }
-                .map { it.toMatch() }
-
-        if (!finishedMatches.isEmpty()) {
-            fixturesService.saveMatches(finishedMatches)
-        }
-
-        sendUpdates(liveMatches)
+//        val liveMatches = liveMatchIds
+//                .mapNotNull { liveMatchService.retrieveLiveMatchFacts(it) }
+//
+//        liveMatchIds.removeIf { id -> !liveMatches.find { it.id == id }.isPlaying() }
+//
+//        val finishedMatches = liveMatches
+//                .filter { it.status == "FT" }
+//                .map { it.toMatch() }
+//
+//        if (!finishedMatches.isEmpty()) {
+//            fixturesService.saveMatches(finishedMatches)
+//        }
+//
+//        sendUpdates(liveMatches)
     }
 
     private fun sendUpdates(liveMatches: List<MatchFacts>) {
-        GlobalScope.launch {
-            template.convertAndSend(UPCOMING_SUBSCRIPTION, liveMatches)
-        }
+//        GlobalScope.launch {
+//            template.convertAndSend(UPCOMING_SUBSCRIPTION, liveMatches)
+//        }
     }
 
     fun addLiveMatch(ids: List<String>) {
-        liveMatchIds.addAll(ids)
+//        liveMatchIds.addAll(ids)
     }
 }

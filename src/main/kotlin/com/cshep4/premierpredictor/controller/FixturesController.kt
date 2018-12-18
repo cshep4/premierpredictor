@@ -3,7 +3,6 @@ package com.cshep4.premierpredictor.controller
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
-import com.cshep4.premierpredictor.extension.isPlaying
 import com.cshep4.premierpredictor.schedule.MatchUpdateScheduler
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.fixtures.ResultsService
@@ -73,13 +72,13 @@ class FixturesController {
     fun getUpcomingFixtures() : ResponseEntity<Map<LocalDate, List<MatchFacts>>> {
         val fixtures = fixturesService.retrieveAllUpcomingFixtures()
 
-        val liveMatchIds = fixtures
-                .values
-                .flatten()
-                .filter { it.isPlaying() }
-                .map { it.id!! }
-
-        matchUpdateScheduler.addLiveMatch(liveMatchIds)
+//        val liveMatchIds = fixtures
+//                .values
+//                .flatten()
+//                .filter { it.isPlaying() }
+//                .map { it.id!! }
+//
+//        matchUpdateScheduler.addLiveMatch(liveMatchIds)
 
         return ResponseEntity.ok(fixtures)
     }

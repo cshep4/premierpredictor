@@ -22,6 +22,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate
 import java.time.LocalDate
 
 @RunWith(MockitoJUnitRunner::class)
+@Ignore
 internal class MatchUpdateSchedulerTest {
     @Mock
     private lateinit var fixturesService: FixturesService
