@@ -27,21 +27,21 @@ Premier League 18/19 predictor app, designed for users to correctly predict all 
 
 ## Functions
 
-#### Fixture update
+#### Fixture Update
 
 - **Language** - JavaScript, Node.js
-- **Event** - Scheduled - 3:00am GMT every day
+- **Event** - Scheduled - 3:00am GMT every day (currently disabled)
 - **Description** - Calls the fixture update API. This will update information about each match to make sure they are up to date, for example if the match has been rescheduled.
 - **Services** - AWS Lambda, Serverless
 
-#### Match data refresh
+#### Match Data Refresh
 
 - **Language** - Kotlin, Spring Boot
 - **Event** - Scheduled - 3:00am GMT every day
-- **Description** - Makes an API call to retrieve all latest match data and updates future matches to make sure they are correct.
-- **Services** - AWS Lambda, Serverless, DynamoDB, SendGrid
+- **Description** - Makes an API call to retrieve all latest match data. This will update information about each match to make sure they are up to date, for example if the match has been rescheduled.
+- **Services** - AWS Lambda, Serverless, DynamoDB, PostgreSQL, SendGrid
 
-#### Match update
+#### Match Update
 
 - **Language** - Kotlin, Spring Boot
 - **Event** - Scheduled - every minute

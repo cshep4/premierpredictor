@@ -3,13 +3,13 @@ package com.cshep4.premierpredictor.controller
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
-import com.cshep4.premierpredictor.schedule.MatchUpdateScheduler
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.fixtures.ResultsService
 import com.cshep4.premierpredictor.service.user.UserScoreService
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
+import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
@@ -33,9 +33,6 @@ internal class FixturesControllerTest {
     @Mock
     lateinit var resultsService: ResultsService
 
-    @Mock
-    lateinit var matchUpdateScheduler: MatchUpdateScheduler
-
     @InjectMocks
     private lateinit var fixturesController: FixturesController
 
@@ -44,11 +41,13 @@ internal class FixturesControllerTest {
         val matches = listOf(Match())
         whenever(resultsService.update()).thenReturn(matches)
 
-        val result = fixturesController.updateFixtures(true)
+        runBlocking {
+            val result = fixturesController.updateFixtures(true)
 
-        assertThat(result.statusCode, Is(OK))
-        assertThat(result.body, Is(matches))
-        verify(userScoreService).updateScores()
+            assertThat(result.statusCode, Is(OK))
+            assertThat(result.body, Is(matches))
+            verify(userScoreService).updateScores()
+        }
     }
 
     @Test
@@ -118,32 +117,6 @@ internal class FixturesControllerTest {
 
         assertThat(result.statusCode, Is(OK))
         assertThat(result.body, Is(upcomingFixtures))
-    }
-
-    @Test
-    fun `'getUpcomingFixtures' Added currently playing games to live matches set`() {
-        val upcomingFixtures = mapOf(
-                Pair(
-                        LocalDate.now(),
-                        listOf(
-                                MatchFacts(id = "1", status = ""),
-                                MatchFacts(id = "2", status = "FT"),
-                                MatchFacts(id = "3", status = "66"),
-                                MatchFacts(id = "4", status = "HT"),
-                                MatchFacts(id = "5", status = null)
-                        )
-                )
-        )
-
-        val expectedIds = listOf("3", "4")
-
-        whenever(fixturesService.retrieveAllUpcomingFixtures()).thenReturn(upcomingFixtures)
-
-        val result = fixturesController.getUpcomingFixtures()
-
-        assertThat(result.statusCode, Is(OK))
-        assertThat(result.body, Is(upcomingFixtures))
-//        verify(matchUpdateScheduler).addLiveMatch(expectedIds)
     }
 
     @Test

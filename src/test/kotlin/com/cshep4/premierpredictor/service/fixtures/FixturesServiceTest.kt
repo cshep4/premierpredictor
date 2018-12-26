@@ -1,9 +1,7 @@
 package com.cshep4.premierpredictor.service.fixtures
 
 import com.cshep4.premierpredictor.component.fixtures.FixturesByDate
-import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
 import com.cshep4.premierpredictor.component.prediction.PredictionMerger
-import com.cshep4.premierpredictor.constant.MatchConstants.REFRESH_RATE
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.Prediction
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
@@ -18,7 +16,6 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.hamcrest.CoreMatchers.nullValue
 import org.hamcrest.MatcherAssert.assertThat
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.InjectMocks
@@ -46,9 +43,6 @@ internal class FixturesServiceTest {
 
     @Mock
     private lateinit var matchFactsRepository: MatchFactsRepository
-
-    @Mock
-    private lateinit var matchUpdater: MatchUpdater
 
     @InjectMocks
     private lateinit var fixturesService: FixturesService
@@ -141,49 +135,6 @@ internal class FixturesServiceTest {
     }
 
     @Test
-    fun `'retrieveAllUpcomingFixtures' will go to call api if some upcoming matches need updating`() {
-        val matches = listOf(
-                MatchFactsEntity(lastUpdated = LocalDateTime.now()),
-                MatchFactsEntity(lastUpdated = LocalDateTime.now().minusMinutes(1))
-        )
-        matches.forEach { it.setDateTime(LocalDateTime.now()) }
-
-        val upcomingMatches = matches.map { it.toDto() }
-        val expectedResult = mapOf(Pair(LocalDate.now(), listOf(MatchFacts())))
-
-        whenever(matchFactsRepository.findAll()).thenReturn(matches)
-        whenever(fixturesByDate.format(upcomingMatches)).thenReturn(expectedResult)
-
-        val result = fixturesService.retrieveAllUpcomingFixtures()
-
-        assertThat(result, Is(expectedResult))
-//        verify(matchUpdater).updateUpcomingMatchesWithLatestScores(upcomingMatches)
-        verify(fixturesByDate).format(upcomingMatches)
-    }
-
-    @Test
-    fun `'retrieveAllUpcomingFixtures' will not go to call api if no upcoming matches need updating`() {
-        val matches = listOf(
-                MatchFactsEntity(lastUpdated = LocalDateTime.now()),
-                MatchFactsEntity(lastUpdated = LocalDateTime.now())
-        )
-        matches.forEach { it.setDateTime(LocalDateTime.now()) }
-
-        val upcomingMatches = matches.map { it.toDto() }
-        val expectedResult = mapOf(Pair(LocalDate.now(), listOf(MatchFacts())))
-
-
-        whenever(matchFactsRepository.findAll()).thenReturn(matches)
-        whenever(fixturesByDate.format(upcomingMatches)).thenReturn(expectedResult)
-
-        val result = fixturesService.retrieveAllUpcomingFixtures()
-
-        assertThat(result, Is(expectedResult))
-        verify(matchUpdater, times(0)).updateUpcomingMatchesWithLatestScores(any())
-        verify(fixturesByDate).format(upcomingMatches)
-    }
-
-    @Test
     fun `'retrieveAllUpcomingFixtures' will return empty map if there are none upcoming`() {
         val matches = listOf(
                 MatchFactsEntity()
@@ -199,57 +150,23 @@ internal class FixturesServiceTest {
     }
 
     @Test
-    fun `'retrieveLiveScoreForMatch' will retrieve the match from the db and return it if its been updated in the last 20 seconds`() {
-        val currentlyStoredMatch = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE - 1))
+    fun `'retrieveLiveScoreForMatch' will retrieve the match from the db`() {
+        val currentlyStoredMatch = MatchFactsEntity()
 
         whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(currentlyStoredMatch))
 
         val result = fixturesService.retrieveLiveScoreForMatch("1")
 
         assertThat(result, Is(currentlyStoredMatch.toDto()))
-        verify(matchUpdater, times(0)).updateMatch(any(), any())
     }
 
     @Test
-    @Ignore(value = "match updates no longer handled here")
-    fun `'retrieveLiveScoreForMatch' will retrieve the match from the api if it does not exist in the db, with lastUpdated set`() {
-        val expectedResult = MatchFacts()
-
+    fun `'retrieveLiveScoreForMatch' will return null if match is not found in db`() {
         whenever(matchFactsRepository.findById("1")).thenReturn(Optional.empty())
-        whenever(matchUpdater.updateMatch("1", null)).thenReturn(expectedResult)
-
-        val result = fixturesService.retrieveLiveScoreForMatch("1")
-
-        assertThat(result, Is(expectedResult))
-        verify(matchUpdater).updateMatch("1", null)
-    }
-
-    @Test
-    @Ignore(value = "match updates no longer handled here")
-    fun `'retrieveLiveScoreForMatch' will retrieve the match from the api and update the db if the match was last updated over 20 seconds ago`() {
-        val currentlyStoredMatchEntity = MatchFactsEntity(lastUpdated = LocalDateTime.now().minusSeconds(REFRESH_RATE + 1))
-        val currentlyStoredMatch = currentlyStoredMatchEntity.toDto()
-
-        val expectedResult = MatchFacts()
-
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.of(currentlyStoredMatchEntity))
-        whenever(matchUpdater.updateMatch("1", currentlyStoredMatch)).thenReturn(expectedResult)
-
-        val result = fixturesService.retrieveLiveScoreForMatch("1")
-
-        assertThat(result, Is(expectedResult))
-        verify(matchUpdater).updateMatch("1", currentlyStoredMatch)
-    }
-
-    @Test
-    fun `'retrieveLiveScoreForMatch' will return null if match is not found in db or api`() {
-        whenever(matchFactsRepository.findById("1")).thenReturn(Optional.empty())
-        whenever(matchUpdater.updateMatch("1", null)).thenReturn(null)
 
         val result = fixturesService.retrieveLiveScoreForMatch("1")
 
         assertThat(result, Is(nullValue()))
-//        verify(matchUpdater).updateMatch("1", null)
     }
 
     @Test

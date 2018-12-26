@@ -9,6 +9,7 @@ import org.junit.Test
 
 internal class OverrideMatchScoreTest {
     private var overrideMatchScore = OverrideMatchScore()
+
     @Test
     fun `'update' takes a list of matches and overridden scores and merges them to create a list of matches`() {
         val matches = listOf(
@@ -41,5 +42,4 @@ internal class OverrideMatchScoreTest {
         assertThat(result[3].hGoals, `is`(nullValue()))
         assertThat(result[3].aGoals, `is`(nullValue()))
     }
-
 }

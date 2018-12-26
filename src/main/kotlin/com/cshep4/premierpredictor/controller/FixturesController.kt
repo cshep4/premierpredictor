@@ -3,7 +3,6 @@ package com.cshep4.premierpredictor.controller
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
 import com.cshep4.premierpredictor.data.api.live.match.MatchFacts
-import com.cshep4.premierpredictor.schedule.MatchUpdateScheduler
 import com.cshep4.premierpredictor.service.fixtures.FixturesService
 import com.cshep4.premierpredictor.service.fixtures.ResultsService
 import com.cshep4.premierpredictor.service.user.UserScoreService
@@ -26,9 +25,6 @@ class FixturesController {
 
     @Autowired
     lateinit var resultsService: ResultsService
-
-    @Autowired
-    lateinit var matchUpdateScheduler: MatchUpdateScheduler
 
     private fun doScoreUpdate(score: Boolean?): Boolean = score != null && score
 
@@ -71,14 +67,6 @@ class FixturesController {
     @GetMapping("/upcoming")
     fun getUpcomingFixtures() : ResponseEntity<Map<LocalDate, List<MatchFacts>>> {
         val fixtures = fixturesService.retrieveAllUpcomingFixtures()
-
-//        val liveMatchIds = fixtures
-//                .values
-//                .flatten()
-//                .filter { it.isPlaying() }
-//                .map { it.id!! }
-//
-//        matchUpdateScheduler.addLiveMatch(liveMatchIds)
 
         return ResponseEntity.ok(fixtures)
     }

@@ -1,7 +1,6 @@
 package com.cshep4.premierpredictor.service.fixtures
 
 import com.cshep4.premierpredictor.component.fixtures.FixturesByDate
-import com.cshep4.premierpredictor.component.matchfacts.MatchUpdater
 import com.cshep4.premierpredictor.component.prediction.PredictionMerger
 import com.cshep4.premierpredictor.data.Match
 import com.cshep4.premierpredictor.data.PredictedMatch
@@ -14,7 +13,6 @@ import com.cshep4.premierpredictor.repository.dynamodb.MatchFactsRepository
 import com.cshep4.premierpredictor.repository.sql.FixturesRepository
 import com.cshep4.premierpredictor.service.prediction.PredictionsService
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 
@@ -35,17 +33,11 @@ class FixturesService {
     @Autowired
     private lateinit var fixturesByDate: FixturesByDate
 
-    @Autowired
-    private lateinit var matchUpdater: MatchUpdater
+    fun retrieveAllMatches(): List<Match> = fixturesRepository.findAll().map { it.toDto() }
 
-    @Autowired
-    private lateinit var template: SimpMessagingTemplate
+    fun retrieveAllPredictedMatchesByUserId(id: Long): List<Match> = fixturesRepository.findPredictedMatchesByUserId(id).map { it.toDto() }
 
-    fun retrieveAllMatches() : List<Match> = fixturesRepository.findAll().map { it.toDto() }
-
-    fun retrieveAllPredictedMatchesByUserId(id: Long) : List<Match> = fixturesRepository.findPredictedMatchesByUserId(id).map { it.toDto() }
-
-    fun retrieveAllMatchesWithPredictions(id: Long) : List<PredictedMatch> {
+    fun retrieveAllMatchesWithPredictions(id: Long): List<PredictedMatch> {
         val matches = retrieveAllMatches()
 
         if (matches.isEmpty()) {
@@ -57,7 +49,7 @@ class FixturesService {
         return predictionMerger.merge(matches, predictions)
     }
 
-    fun retrieveAllUpcomingFixtures() : Map<LocalDate, List<MatchFacts>> {
+    fun retrieveAllUpcomingFixtures(): Map<LocalDate, List<MatchFacts>> {
         val upcomingMatches = matchFactsRepository.findAll()
                 .filter { it.getDateTime()!!.isToday() || it.getDateTime()!!.isUpcoming() }
                 .sortedBy { it.getDateTime() }
@@ -68,28 +60,12 @@ class FixturesService {
             return emptyMap()
         }
 
-//        GlobalScope.launch {
-//            if (upcomingMatches.any { it.lastUpdated!!.isInNeedOfUpdate() }) {
-//                val updatedMatches = matchUpdater.updateUpcomingMatchesWithLatestScores(upcomingMatches)
-//
-//                template.convertAndSend(UPCOMING_SUBSCRIPTION, updatedMatches)
-//            }
-//        }
-
         return fixturesByDate.format(upcomingMatches)
     }
 
-    fun retrieveLiveScoreForMatch(id: String) : MatchFacts? {
-        val match = matchFactsRepository.findById(id)
-                .map { it.toDto() }
-                .orElse(null)
-
-//        if (match == null || match.lastUpdated!!.isInNeedOfUpdate()) {
-//            return matchUpdater.updateMatch(id, match)
-//        }
-
-        return match
-    }
+    fun retrieveLiveScoreForMatch(id: String): MatchFacts? = matchFactsRepository.findById(id)
+            .map { it.toDto() }
+            .orElse(null)
 
     fun saveMatches(matches: List<Match>): List<Match> {
         val matchEntities = matches.map { MatchEntity.fromDto(it) }
