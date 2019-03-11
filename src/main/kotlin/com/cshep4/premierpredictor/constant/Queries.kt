@@ -155,4 +155,10 @@ object Queries {
             "    AND (a.hgoals != b.hgoals2 " +
             "    OR a.agoals != b.agoals2)" +
             " ORDER BY a.userid, a.matchid"
+
+    const val QUERY_GET_UPCOMING_FIXTURE_IDS = "SELECT id" +
+            " FROM match" +
+            " WHERE datetime > now()" +
+            " ORDER BY datetime ASC" +
+            " LIMIT 20"
 }

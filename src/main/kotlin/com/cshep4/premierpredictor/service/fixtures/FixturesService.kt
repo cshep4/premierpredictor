@@ -49,11 +49,27 @@ class FixturesService {
         return predictionMerger.merge(matches, predictions)
     }
 
+//    fun retrieveAllUpcomingFixtures(): Map<LocalDate, List<MatchFacts>> {
+//        val upcomingMatches = matchFactsRepository.findAll()
+//                .filter { it.getDateTime()!!.isToday() || it.getDateTime()!!.isUpcoming() }
+//                .sortedBy { it.getDateTime() }
+//                .take(20)
+//                .map { it.toDto() }
+//
+//        if (upcomingMatches.isEmpty()) {
+//            return emptyMap()
+//        }
+//
+//        return fixturesByDate.format(upcomingMatches)
+//    }
+
     fun retrieveAllUpcomingFixtures(): Map<LocalDate, List<MatchFacts>> {
-        val upcomingMatches = matchFactsRepository.findAll()
-                .filter { it.getDateTime()!!.isToday() || it.getDateTime()!!.isUpcoming() }
+        val ids = fixturesRepository.findUpcomingFixtureIds().map { it.toString() }
+
+        val upcomingMatches = matchFactsRepository.findAllById(ids)
+//                .filter { it.getDateTime()!!.isToday() || it.getDateTime()!!.isUpcoming() }
                 .sortedBy { it.getDateTime() }
-                .take(20)
+//                .take(20)
                 .map { it.toDto() }
 
         if (upcomingMatches.isEmpty()) {

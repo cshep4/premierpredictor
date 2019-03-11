@@ -38,6 +38,8 @@ class WebSecurity : WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http.cors().and().csrf().disable().authorizeRequests()
+                .antMatchers(GET, "/").permitAll()
+                .antMatchers(GET, "/_health").permitAll()
                 .antMatchers(POST, SIGN_UP_URL).permitAll()
                 .antMatchers(PUT, FIXTURES_UPDATE_URL).permitAll()
                 .antMatchers(PUT, SET_USED_TOKEN_URL).permitAll()

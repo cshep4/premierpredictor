@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: premierpredictor-ingress
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
+#    nginx.ingress.kubernetes.io/rewrite-target: /
+#    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+#    certmanager.k8s.io/acme-http01-edit-in-place: "true"
+spec:
+#    tls:
+#    - secretName: premierpredictor-tls-secret
+#      hosts:
+#        - premierpredictor.net
+  backend:
+    serviceName: premierpredictor-service
+    servicePort: 8080
+#  rules:
+#    - host: premierpredictor.net
+#      http:
+#        paths:
+#          - backend:
+#              serviceName: premierpredictor-service
+#              servicePort: 8080
+#  rules:
+#    - host: premierpredictor.net
+#      http:
+#        paths:
+#          - path: /core
+#            backend:
+#              serviceName: premierpredictor-service
+#              servicePort: 8080

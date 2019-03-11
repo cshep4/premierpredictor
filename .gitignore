@@ -49,3 +49,4 @@ nbdist/
 hs_err_pid*
 
 /src/main/resources/application-local.properties
+kubernetes-manifests/secrets.yaml
