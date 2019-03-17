@@ -159,7 +159,7 @@ object Queries {
     const val QUERY_GET_UPCOMING_FIXTURE_IDS = "SELECT id" +
             " FROM match" +
             " WHERE datetime > now()" +
-            " OR datetime::date = CURRENT_DATE::date" +
+//            " OR datetime::date = CURRENT_DATE::date" +
             " ORDER BY datetime ASC" +
             " LIMIT 20"
 }
